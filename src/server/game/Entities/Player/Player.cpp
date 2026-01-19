@@ -1529,7 +1529,7 @@ void Player::Update(uint32 p_time)
     {
         if (ptr_Interval <= p_time)
         {
-            ChatHandler(GetSession()).PSendSysMessage("[PlayedTimeReward] :: Вы получили вознаграждение за пребывание в сети.");
+            ChatHandler(GetSession()).PSendSysMessage("[PlayedTimeReward] :: You have been rewarded for playing .");
             ModifyMoney(ptr_Money);
             AddItem(ptr_Item, 1, 0);
             ptr_Interval = sConfigMgr->GetIntDefault("PlayedTimeReward.Interval", 0);
@@ -18092,9 +18092,9 @@ void Player::SendNewItem(Item* item, uint32 count, bool received, bool created, 
     packet.Quantity = count;
     packet.DisplayText = !item->dungeonEncounterID ? WorldPackets::Item::ItemPushResult::DisplayType::NORMAL : WorldPackets::Item::ItemPushResult::DisplayType::ENCOUNTER_LOOT;
     packet.QuantityInInventory = GetItemCount(item->GetEntry());
+    packet.BattlePetSpeciesID = item->GetModifier(ITEM_MODIFIER_BATTLE_PET_SPECIES_ID);
     packet.BattlePetBreedID = item->GetModifier(ITEM_MODIFIER_BATTLE_PET_BREED_DATA) & 0xFFFFFF;
     packet.BattlePetBreedQuality = (item->GetModifier(ITEM_MODIFIER_BATTLE_PET_BREED_DATA) >> 24) & 0xFF;
-    packet.BattlePetSpeciesID = item->GetModifier(ITEM_MODIFIER_BATTLE_PET_SPECIES_ID);
     packet.BattlePetLevel = item->GetModifier(ITEM_MODIFIER_BATTLE_PET_LEVEL);
     packet.Pushed = received;
     packet.IsEncounterLoot = item->dungeonEncounterID; // TODO: this only for personal loot - trigger event ENCOUNTER_LOOT_RECEIVED, send toast list of looted all party/raid members

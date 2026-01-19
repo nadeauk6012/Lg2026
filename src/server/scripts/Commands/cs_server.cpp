@@ -127,6 +127,7 @@ public:
         }
 
         handler->PSendSysMessage(GitRevision::GetFullVersion());
+        handler->PSendSysMessage(LANG_CONNECTED_PLAYERS, playersNum, maxPlayersNum);
         handler->PSendSysMessage(LANG_CONNECTED_USERS, activeClientsNum, maxActiveClientsNum, queuedClientsNum, maxQueuedClientsNum);
         handler->PSendSysMessage(LANG_UPTIME, uptime.c_str());
         handler->PSendSysMessage("World delay: %u ms", updateTime);

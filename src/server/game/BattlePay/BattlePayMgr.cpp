@@ -39,7 +39,7 @@ using namespace Battlepay;
 BattlepayManager::BattlepayManager(WorldSession* session)
 {
     _session = session;
-    _walletName = "Nordrassill points";
+    _walletName = "Val'sharah Points";
     _purchaseIDCount = 0;
     _distributionIDCount = 0;
 }
@@ -877,7 +877,7 @@ void BattlepayManager::SendPointsBalance()
 		data1 << player->GetDonateTokens();
 		data << _session->GetAccountId();
 		player->SendCustomMessage(GetCustomMessage(CustomMessage::AccountId), data);
-		player->SendCustomMessage("|cff1eff00 Tus Puntos son: ", data1);
+		player->SendCustomMessage("|cff1eff00 Points: ", data1);
 
 	}
 }

@@ -12,12 +12,9 @@
 #include "SpellAuraEffects.h"
 #include "Vehicle.h"
 
-
 /*
 	Summon Point: Abandoned Temple [ Uwow.biz Custom events ]
 */
-
-
 
 enum bossTempleVonjin
 {
@@ -219,7 +216,6 @@ struct npc_temple_vonjin_weapon : public ScriptedAI
 	}
 };
 
-
 enum bossTempleLessar
 {
 	SPELL_MELEE_STOMP = 305119,
@@ -335,7 +331,6 @@ struct boss_temple_lessar : public ScriptedAI
 		DoMeleeAttackIfReady();
 	}
 };
-
 
 enum bossTempleHexLord
 {
@@ -845,7 +840,6 @@ struct boss_hex_lord_hadorn : public ScriptedAI
 		DoMeleeAttackIfReady();
 	}
 };
-
 
 // 150017 150018 150019
 struct npc_hexlord_hadorn_poison_ring : public ScriptedAI
@@ -2274,11 +2268,6 @@ class spell_new_year_evala_pos_check : public SpellScript
 		OnEffectHitTarget += SpellEffectFn(spell_new_year_evala_pos_check::HandleDamage, EFFECT_0, SPELL_EFFECT_DUMMY);
 	}
 };
-
-
-
-
-
 
 /*
 
@@ -5688,7 +5677,7 @@ public:
 							playerIsTank = 1;
 						}
 						CharacterDatabase.PQuery("INSERT INTO `nordrassil_tournament_blood_and_heal` (`guid`,`p_name`, `specialization`, `is_dps`,`is_tank`) VALUES ('%u','%s', '%u', '%u','%u');", player->GetGUIDLow(), player->GetName(), playerSpecialization, playerIsDps, playerIsTank);
-						creature->MonsterSay("Bienvenido al Torneo de Sangre y Vida.", LANG_UNIVERSAL, player->GetGUID());
+						creature->MonsterSay("Welcome to the Tournament of Blood and Life.", LANG_UNIVERSAL, player->GetGUID());
 						ChatHandler(player).PSendSysMessage(MSG_INSCRIPTION_COMPLETED);
 						player->AddDelayedEvent(5000, [player]() -> void
 						{
@@ -5756,7 +5745,7 @@ public:
 		EventMap events;
 		void Reset() override
 		{
-			Tell("Bienvenidos guerreros de todo Azeroth al Torneo de Sangre y Vida.");
+			Tell("Welcome, warriors from across Azeroth, to the Tournament of Blood and Life.");
 			// Call first player
 			events.RescheduleEvent(EVENT_CALL_NEXT_PLAYER, 5000);
 		}
@@ -5774,7 +5763,7 @@ public:
 					{
 						me->AddDelayedEvent(3000, [this]() -> void
 						{
-							Tell(Trinity::StringFormat("Es el turno de %s y tiene 30 segundos para presentarse.", nextplayername.c_str()));
+							Tell(Trinity::StringFormat("It's %s's turn, and they have 30 seconds to introduce themselves.", nextplayername.c_str()));
 							// Wait for player 30 seconds
 							countdown = 5;
 							events.RescheduleEvent(EVENT_WAIT_PLAYER, 30000);
@@ -5786,7 +5775,7 @@ public:
 				case EVENT_WAIT_PLAYER_COUNT_DOWN:
 				{
 					if (countdown == 5)
-						Tell(Trinity::StringFormat("El caracter %s sera descalificado en %u...", nextplayername.c_str(), countdown));
+						Tell(Trinity::StringFormat("The character %s will be disqualified in %u...", nextplayername.c_str(), countdown));
 					else
 						Tell(Trinity::StringFormat("%u...", countdown));
 					countdown--;
@@ -5797,7 +5786,7 @@ public:
 				case EVENT_WAIT_PLAYER:
 				{
 					// Disqualify player
-					Tell(Trinity::StringFormat("El caracter %s ha sido descalificado por no presentarse.", nextplayername.c_str()));
+					Tell(Trinity::StringFormat("The character %s has been disqualified for failing to appear.", nextplayername.c_str()));
 					CharacterDatabase.PQuery("UPDATE `nordrassil_tournament_blood_and_heal` SET `finish`='1' WHERE `guid`='%u' ;", nextplayerguid);
 					amount = 0;
 					nextplayerguid = 0;
@@ -5826,11 +5815,11 @@ public:
 				{
 					if (NextplayerIsDps)
 					{
-						Tell(Trinity::StringFormat("Tu turno ha terminado con un total de %u puntos, gracias por participar", amount));
+						Tell(Trinity::StringFormat("Your turn has ended with a total of %u points, thank you for participating !", amount));
 					}
 					else
 					{
-						Tell(Trinity::StringFormat("Tu turno ha terminado con un total de %u puntos, gracias por participar", amount));
+						Tell(Trinity::StringFormat("Your turn has ended with a total of %u points, thank you for participating !", amount));
 					}
 					FinishRound();
 					break;
@@ -5844,7 +5833,7 @@ public:
 						QueryResult result = CharacterDatabase.PQuery("SELECT `guid`,`p_name`,`amount` FROM `nordrassil_tournament_blood_and_heal` WHERE `amount`=(SELECT MAX(`amount`) FROM `nordrassil_tournament_blood_and_heal` WHERE `specialization`='%u' AND `finish` !='0') AND `amount`!=0;", specializationTurn->first);
 						if (!result)
 						{
-							Tell(Trinity::StringFormat("No hay participantes por la especializacion %s .", specializationTurn->second.c_str()));
+							Tell(Trinity::StringFormat("There are no participants for this specialization %s .", specializationTurn->second.c_str()));
 						}
 						else
 						{
@@ -5852,7 +5841,7 @@ public:
 							uint32 playerwinerguid = fields[0].GetUInt32();
 							std::string playerwinername = fields[1].GetString();
 							uint64 playerwineramount = fields[2].GetUInt32();
-							Tell(Trinity::StringFormat("Por la especializacion de %s el ganador es %s con un total de %u.", specializationTurn->second.c_str(), playerwinername.c_str(), playerwineramount));
+							Tell(Trinity::StringFormat("Due to the specialization of %s the winner is %s with a total of %u.", specializationTurn->second.c_str(), playerwinername.c_str(), playerwineramount));
 							// Kill credit for winer player
 							CharacterDatabase.PQuery("UPDATE `nordrassil_tournament_blood_and_heal` SET `specialization_winer`='1' WHERE `guid`='%u' ;", playerwinerguid);
 						}
@@ -5872,7 +5861,7 @@ public:
 					QueryResult healerresult = CharacterDatabase.Query("SELECT `guid`,`p_name`,`specialization`,`amount` FROM `nordrassil_tournament_blood_and_heal` WHERE `amount`=(SELECT MAX(`amount`) FROM `nordrassil_tournament_blood_and_heal` WHERE `is_dps` != '1' AND `finish` != '0') AND `amount`!=0;");
 					if (!healerresult)
 					{
-						Tell("No tenemos ningun participante por las especializaciones de Sanacion");
+						Tell("We do not have any participants for the Healing specializations.");
 					}
 					else
 					{
@@ -5883,7 +5872,7 @@ public:
 						uint64 playerhealerwineramount = fields[3].GetUInt32();
 						// find specializacion string
 						std::string SpecializationName = FindSpecialiacionName(playerhealerwinerspecialization);
-						Tell(Trinity::StringFormat("El Ganador General del Toneo de Sangre y Vida de las Especializaciones de Sanacion es %s perteneciente a la especializacion %s con un total de %u", playerhealerwinername.c_str(), SpecializationName.c_str(), playerhealerwineramount));
+						Tell(Trinity::StringFormat("The Overall Winner of the Blood and Life Tournament for Healing Specializations is %s belonging to the specialization %s with a total of %u", playerhealerwinername.c_str(), SpecializationName.c_str(), playerhealerwineramount));
 						// Special reward for this player
 						CharacterDatabase.PQuery("UPDATE `nordrassil_tournament_blood_and_heal` SET `general_winer`='1' WHERE `guid`='%u';", playerhealerwinerguid);
 					}
@@ -5896,7 +5885,7 @@ public:
 					QueryResult tankresult = CharacterDatabase.Query("SELECT `guid`,`p_name`,`specialization`,`amount` FROM `nordrassil_tournament_blood_and_heal` WHERE `amount`=(SELECT MAX(`amount`) FROM `nordrassil_tournament_blood_and_heal` WHERE `is_tank` = '1' AND `finish` != '0') AND `amount`!=0;");
 					if (!tankresult)
 					{
-						Tell("No tenemos ningun participante por las especializaciones de Tanque");
+						Tell("We do not have any participants for Tank specializations.");
 					}
 					else
 					{
@@ -5907,7 +5896,7 @@ public:
 						uint64 playertankwineramount = fields[3].GetUInt32();
 						// find specializacion string
 						std::string SpecializationName = FindSpecialiacionName(playertankwinerspecialization);
-						Tell(Trinity::StringFormat("El Ganador General del Toneo de Sangre y Vida de las Especializaciones de Tanque es %s perteneciente a la especializacion %s con un total de %u", playertankwinername.c_str(), SpecializationName.c_str(), playertankwineramount));
+						Tell(Trinity::StringFormat("The Overall Winner of the Blood and Life Tournament for Tank Specializations is %s belonging to the specialization %s with a total of %u", playertankwinername.c_str(), SpecializationName.c_str(), playertankwineramount));
 						// Special reward for this player
 						CharacterDatabase.PQuery("UPDATE `nordrassil_tournament_blood_and_heal` SET `general_winer`='1' WHERE `guid`='%u';", playertankwinerguid);
 					}
@@ -5920,7 +5909,7 @@ public:
 					QueryResult dpsrresult = CharacterDatabase.Query("SELECT `guid`,`p_name`,`specialization`,`amount` FROM `nordrassil_tournament_blood_and_heal` WHERE `amount`=(SELECT MAX(`amount`) FROM `nordrassil_tournament_blood_and_heal` WHERE `is_dps` ='1' AND `is_tank` = '0' AND `finish` !='0') AND `amount`!=0;");
 					if (!dpsrresult)
 					{
-						Tell("No tenemos ningun participante por las especializaciones de DPS");
+						Tell("We do not have any participants for the DPS specializations.");
 					}
 					else
 					{
@@ -5931,7 +5920,7 @@ public:
 						uint64 playerdpswineramount = fields[3].GetUInt32();
 						// find specializacion string
 						std::string SpecializationName = FindSpecialiacionName(playerdpswinerspecialization);
-						Tell(Trinity::StringFormat("El Ganador General del Toneo de Sangre y Vida de las Especializaciones de DPS es %s perteneciente a la especializacion %s con un total de %u", playerdpswinername.c_str(), SpecializationName.c_str(), playerdpswineramount));
+						Tell(Trinity::StringFormat("The overall winner of the Blood and Life Tournament for DPS specializations is %s, belonging to the %s specialization, with a total of %u.", playerdpswinername.c_str(), SpecializationName.c_str(), playerdpswineramount));
 						// Special reward for this player
 						CharacterDatabase.PQuery("UPDATE `nordrassil_tournament_blood_and_heal` SET `general_winer`='1' WHERE `guid`='%u';", playerdpswinerguid);
 					}
@@ -5939,12 +5928,12 @@ public:
 					{
 						if (!me)
 							return;
-						Tell("Gracias a todos por participar y formar parte de la Comunidad de WoW Legion Nordrassil.");
+						Tell("Thank you all for participating and being part of the Community of BH-Teams reworks and WoW Legion Nordrassil.");
 						me->AddDelayedEvent(3000, [this]() -> void
 						{
 							if (!me)
 								return;
-							Tell("Hasta la proxima.");
+							Tell("Until next time.");
 							me->AddDelayedEvent(3000, [this]() -> void
 							{
 								if (!me)
@@ -5980,7 +5969,7 @@ public:
 							roundstarted = true;
 							if (player->GetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID) != nextplayerspecialization)
 								player->ForceChangeTalentGroup(nextplayerspecialization);
-							Tell(Trinity::StringFormat("%s ha llegado, y tiene 20 segundos para demostrarme de que es capaz. Buena suerte.", nextplayername.c_str()));
+							Tell(Trinity::StringFormat("%s has arrived, and you have 20 seconds to show me what you can do. Good luck.", nextplayername.c_str()));
 							events.CancelEvent(EVENT_WAIT_PLAYER_COUNT_DOWN);
 							events.CancelEvent(EVENT_WAIT_PLAYER);
 							events.RescheduleEvent(EVENT_START_ROUND, 5000);
@@ -6016,7 +6005,7 @@ public:
 				{
 					if (attacker->ToPlayer())
 					{
-						attacker->MonsterSay("Fui frezado por incumplir las normas del torneo.", LANG_UNIVERSAL, ObjectGuid::Empty);
+						attacker->MonsterSay("I was disqualified for breaking the tournament rules.", LANG_UNIVERSAL, ObjectGuid::Empty);
 						attacker->AddAura(9454, attacker);
 						if (Aura* aura = attacker->GetAura(9454))
 						{
@@ -6047,7 +6036,7 @@ public:
 				{
 					if (done_by->ToPlayer())
 					{
-						done_by->MonsterSay("Fui frezado por incumplir las normas del torneo.", LANG_UNIVERSAL, ObjectGuid::Empty);
+						done_by->MonsterSay("I was disqualified for breaking the tournament rules.", LANG_UNIVERSAL, ObjectGuid::Empty);
 						done_by->AddAura(9454, done_by);
 						if (Aura* aura = done_by->GetAura(9454))
 						{
@@ -6084,7 +6073,7 @@ public:
 					{
 						if (!me)
 							return;
-						Tell("A luchar");
+						Tell("Let's fight!");
 						me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 						me->SetReactState(REACT_PASSIVE);
 						// finish roun counter
@@ -6119,7 +6108,7 @@ public:
 			// Event has concluded
 			if (!result)
 			{
-				Tell("EL Torneo de Sangre y vida ha concluido, en breve se daran los resultados");
+				Tell("The Blood and Life Tournament has concluded, and the results will be announced shortly.");
 				events.Reset();
 				events.RescheduleEvent(EVENT_SHOW_WINERS, 5000);
 				return false;
@@ -6127,7 +6116,7 @@ public:
 			else
 			{
 				// Show number to finish 
-				Tell(Trinity::StringFormat("Actualmente quedan %u participantes pendientes. Sean pacientes y esperen su turno.", result->GetRowCount()));
+				Tell(Trinity::StringFormat("Currently, %u participants are still waiting. Please be patient and wait your turn.", result->GetRowCount()));
 				Field* fields = result->Fetch();
 				nextplayerguid = fields[0].GetUInt32();
 				nextplayername = fields[1].GetString();
@@ -6153,7 +6142,7 @@ public:
 					return itr.second;
 				}
 			}
-			return "Especializacion no encontrada";
+			return "Specialization not found";
 		}
 		void Tell(std::string _text)
 		{
@@ -6174,53 +6163,53 @@ public:
 		std::unordered_map<uint32, std::string> SpecializationsCopy;
 		std::unordered_map<uint32, std::string> Specializations
 		{
-			{SPEC_MAGE_ARCANE,"Mago Arcano"},
-			{SPEC_MAGE_FIRE,"Mago Fuego"},
-			{SPEC_MAGE_FROST,"Mago Escarcha"},
+			{SPEC_MAGE_ARCANE,"Mage Arcane"},
+			{SPEC_MAGE_FIRE,"Mage Fire"},
+			{SPEC_MAGE_FROST,"Mage Frost"},
 
-			{SPEC_PALADIN_HOLY,"Paladin Sagrado"},
-			{SPEC_PALADIN_PROTECTION,"Paladin Proteccion"},
-			{SPEC_PALADIN_RETRIBUTION,"Paladin Retribucion"},
+			{SPEC_PALADIN_HOLY,"Paladin Holy"},
+			{SPEC_PALADIN_PROTECTION,"Paladin Protection"},
+			{SPEC_PALADIN_RETRIBUTION,"Paladin Retribution"},
 
-			{SPEC_WARRIOR_ARMS,"Warrior Arma"},
-			{SPEC_WARRIOR_FURY,"Warrior Furia"},
-			{SPEC_WARRIOR_PROTECTION,"Warrior Proteccion"},
+			{SPEC_WARRIOR_ARMS,"Warrior Arms"},
+			{SPEC_WARRIOR_FURY,"Warrior Fury"},
+			{SPEC_WARRIOR_PROTECTION,"Warrior Protecrion"},
 
-			{SPEC_DRUID_BALANCE,"Druida Equilibrio"},
-			{SPEC_DRUID_CAT,"Druida Feral"},
-			{SPEC_DRUID_BEAR,"Druida Guardian"},
-			{SPEC_DRUID_RESTORATION,"Druida Restauracion"},
+			{SPEC_DRUID_BALANCE,"Balance Druid"},
+			{SPEC_DRUID_CAT,"Feral Druid"},
+			{SPEC_DRUID_BEAR,"Guardian Druid"},
+			{SPEC_DRUID_RESTORATION,"Restauration Druid"},
 
 			{SPEC_DK_BLOOD,"Caballero de la Muerte Sangre"},
 			{SPEC_DK_FROST,"Caballero de la Muerte Escarcha"},
 			{SPEC_DK_UNHOLY,"Caballero de la Muerte Profano"},
 
-			{SPEC_HUNTER_BEASTMASTER,"Hunter Bestia"},
-			{SPEC_HUNTER_MARKSMAN,"Hunter Punteria"},
-			{SPEC_HUNTER_SURVIVAL,"Hunter Supervivencia"},
+			{SPEC_HUNTER_BEASTMASTER,"Beast Mastery Hunter"},
+			{SPEC_HUNTER_MARKSMAN,"Marksmanship Hunter"},
+			{SPEC_HUNTER_SURVIVAL,"Survival Hunter"},
 
-			{SPEC_PRIEST_DISCIPLINE,"Sacerdote Disciplina"},
-			{SPEC_PRIEST_HOLY,"Sacerdote Sagrado"},
-			{SPEC_PRIEST_SHADOW,"Sacerdote Sombra"},
+			{SPEC_PRIEST_DISCIPLINE,"Discipline Priest"},
+			{SPEC_PRIEST_HOLY,"Holy Priest"},
+			{SPEC_PRIEST_SHADOW,"Shadow Priest"},
 
 			{SPEC_ROGUE_ASSASSINATION,"Picaro Asesinato"},
 			{SPEC_ROGUE_COMBAT,"Picaro Forajido"},
 			{SPEC_ROGUE_SUBTLETY,"Picaro Sutileza"},
 
-			{SPEC_SHAMAN_ELEMENTAL,"Shaman Elemental"},
+			{SPEC_SHAMAN_ELEMENTAL,"Elemental Shaman"},
 			{SPEC_SHAMAN_ENHANCEMENT,"Shaman Mejora"},
-			{SPEC_SHAMAN_RESTORATION,"Shaman Restauracion"},
+			{SPEC_SHAMAN_RESTORATION,"Restauration Shaman"},
 
-			{SPEC_WARLOCK_AFFLICTION,"Brujo Afliccion"},
-			{SPEC_WARLOCK_DEMONOLOGY,"Brujo Demonologia"},
-			{SPEC_WARLOCK_DESTRUCTION,"Brujo Destruccion"},
+			{SPEC_WARLOCK_AFFLICTION,"Warlock Afliction"},
+			{SPEC_WARLOCK_DEMONOLOGY,"Warlock Demonologi"},
+			{SPEC_WARLOCK_DESTRUCTION,"Warlock Destruction"},
 
-			{SPEC_MONK_BREWMASTER,"Monje Maestro Cervecero"},
-			{SPEC_MONK_WINDWALKER,"Monje Caminaviento"},
-			{ SPEC_MONK_MISTWEAVER,"Monje Tejedor de la Niebla"},
+			{SPEC_MONK_BREWMASTER,"Brewmaster Monk"},
+			{SPEC_MONK_WINDWALKER,"Windwalker Monk"},
+			{ SPEC_MONK_MISTWEAVER,"Mistweaver Monk"},
 
-			{SPEC_DEMON_HUNER_HAVOC,"Cazador de Demonio Destruccion"},
-			{SPEC_DEMON_HUNER_VENGEANCE,"Cazador de Demonio Venganza"},
+			{SPEC_DEMON_HUNER_HAVOC,"Havoc Demon Hunter"},
+			{SPEC_DEMON_HUNER_VENGEANCE,"Vengeance Demon Hunter"},
 		};
 	};
 
@@ -6248,7 +6237,7 @@ public:
 		// if player is not subscribed
 		if (!totalplayers)
 		{
-			player->GetSession()->SendNotification("|cff00FF00No hay participantes ganadores en el Torneo de Sangre y Vida!");
+			player->GetSession()->SendNotification("|cff00FF00No there are winning participants in the Tournament of Blood and Life!");
 			player->DestroyItemCount(itemid, 1, true);
 			return false;
 		}
@@ -6256,7 +6245,7 @@ public:
 		{
 			uint32 totalmoney = totalplayers->GetRowCount() * 1000 * 10000; // 1000 of gold for each player 
 			uint32 moneyforwiners = totalmoney / totalspecializations->GetRowCount();
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 5 monedas de juego y %u de oro!", moneyforwiners/10000);
+			player->GetSession()->SendNotification("|cff00FF00You have received 5 game coins and %u gold!", moneyforwiners/10000);
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+5 WHERE `id`='%u';", bnetaccountid);  
 			player->ModifyMoney(moneyforwiners);
@@ -6409,7 +6398,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 1 moneda para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 1 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+1 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6432,7 +6421,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 2 monedas para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 2 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+2 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6455,7 +6444,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 3 monedas para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 3 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+3 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6478,7 +6467,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 4 monedas para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 4 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+4 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6501,7 +6490,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 5 monedas para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 5 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+5 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6524,7 +6513,7 @@ public:
 	bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
 	{
 		{
-			player->GetSession()->SendNotification("|cff00FF00Has recibido 10 monedas para la tienda del juego!");
+			player->GetSession()->SendNotification("|cff00FF00You have received 10 coin for the in-game store!");
 			uint32 bnetaccountid = player->GetSession()->GetBattlenetAccountId();
 			LoginDatabase.PExecute("UPDATE `battlenet_accounts` SET `balans`=balans+10 WHERE `id`='%u';", bnetaccountid);
 			player->DestroyItemCount(itemid, 1, true);
@@ -6632,7 +6621,7 @@ void AddSC_custom_events()
 	new npc_subscriber_tournament();
 	new npc_tournament_master();
 	new item_tournament_bl_reward();
-		/// Pandaria Runing
+	/// Pandaria Runing
 	new npc_pandarian_race_master();
 	new npc_pandarian_rune_speed();
 	new npc_pandarian_rune_jumper();

@@ -1014,14 +1014,14 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sBattlePetAbilityTurnStore);
     LOAD_DB2(sBattlePetBreedQualityStore);
     LOAD_DB2(sBattlePetBreedStateStore);
-    //LOAD_DB2(sBattlePetDisplayOverrideStore);
+    LOAD_DB2(sBattlePetDisplayOverrideStore);
     LOAD_DB2(sBattlePetEffectPropertiesStore);
-    //LOAD_DB2(sBattlePetNPCTeamMemberStore);
+    LOAD_DB2(sBattlePetNPCTeamMemberStore);
     LOAD_DB2(sBattlePetSpeciesStore);
     LOAD_DB2(sBattlePetSpeciesStateStore);
     LOAD_DB2(sBattlePetSpeciesXAbilityStore);
     LOAD_DB2(sBattlePetStateStore);
-    //LOAD_DB2(sBattlePetVisualStore);
+    LOAD_DB2(sBattlePetVisualStore);
     //LOAD_DB2(sBeamEffectStore);
     //LOAD_DB2(sBoneWindModifierModelStore);
     //LOAD_DB2(sBoneWindModifiersStore);

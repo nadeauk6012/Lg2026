@@ -1,1 +1,0 @@
-dotnet publish .\WDBXEditor2\WDBXEditor2.csproj -r win-x64 -c Release /p:PublishSingleFile=true -o publish
