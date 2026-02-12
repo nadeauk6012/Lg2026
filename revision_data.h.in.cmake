@@ -5,6 +5,7 @@
  #define _BRANCH                    "@rev_branch@"
  #define _CMAKE_COMMAND             R"(@CMAKE_COMMAND@)"
  #define _SOURCE_DIRECTORY          R"(@CMAKE_SOURCE_DIR@)"
+ #define _CMAKE_HOST_SYSTEM         R"(@CMAKE_HOST_SYSTEM_NAME@ @CMAKE_HOST_SYSTEM_VERSION@)"
  #define _BUILD_DIRECTORY           R"(@BUILDDIR@)"
  #define _MYSQL_EXECUTABLE          R"(@MYSQL_EXECUTABLE@)"
  #define _FULL_DATABASE             "BH_world_735_26124_2024_09_24.sql"
@@ -13,6 +14,7 @@
  #define VER_LEGALCOPYRIGHT_STR     "(c)2008-2026 TrinityCore"
  #define VER_FILEVERSION            0,4,0
  #define VER_FILEVERSION_STR        "@rev_hash@ @rev_date@ (@rev_branch@ branch)"
+ #define VER_FILEVERSION_STR        "BHCORE"
  #define VER_PRODUCTVERSION         VER_FILEVERSION
  #define VER_PRODUCTVERSION_STR     VER_FILEVERSION_STR
 #endif // __REVISION_DATA_H__
