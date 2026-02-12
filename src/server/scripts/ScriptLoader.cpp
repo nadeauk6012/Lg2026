@@ -24,13 +24,11 @@ void AddSC_battleground_kotmogu();
 void AddSC_battleground_shado_pan();
 
 void AddSC_BattlePay_Services();
-void AddSC_WhoLoggedScripts();
 void AddSC_BattlePay_Professions();
 
 // Customs
 void AddSC_event_april();
 void AddSC_Loskutik();
-void AddSC_midsummer_fire_festival();
 void AddSC_bracket_commandscript();
 void AddSC_multi_vendor();
 void AddSC_traffic_commandscript();
@@ -44,10 +42,8 @@ void AddSC_npc_teleguy();
 void AddSC_arena_spectator_script();
 void AddSC_Duel();
 void AddSC_custom_arena_1v1();
-void AddSC_GOMove_commandscript();
 void AddSC_npc_quest_giver();
 void AddSC_npc_PetBattleTrainer();
-void AddSC_darkmoon();
 void AddSC_event_tarecgosa();
 void Addsc_dalaran_invasion();
 void AddSC_solocraft();
@@ -82,7 +78,6 @@ void AddSC_bf_commandscript();
 void AddSC_cast_commandscript();
 void AddSC_character_commandscript();
 void AddSC_cheat_commandscript();
-void AddSC_export_commandscript();
 void AddSC_debug_commandscript();
 void AddSC_disable_commandscript();
 void AddSC_event_commandscript();
@@ -157,6 +152,10 @@ void AddSC_boss_ammunae();
 void AddSC_boss_isiset();
 void AddSC_boss_setesh();
 void AddSC_boss_rajh();
+
+// Events
+void AddSC_darkmoon();
+void AddSC_midsummer_fire_festival();
 
 //kalimdor
 void AddSC_blackfathom_deeps();              //Blackfathom Depths
@@ -1356,6 +1355,7 @@ void AddScripts()
 	AddLegionScripts();
     AddDraenorScripts();
     AddEasternKingdomsScripts();
+	EventsScripts();
     AddPandarieScripts();
 #endif
 }
@@ -1392,7 +1392,6 @@ void AddCommandScripts()
     AddSC_cast_commandscript();
     AddSC_character_commandscript();
     AddSC_cheat_commandscript();
-	AddSC_export_commandscript();
     AddSC_debug_commandscript();
     AddSC_disable_commandscript();
     AddSC_event_commandscript();
@@ -1917,7 +1916,6 @@ void AddCustomScripts()
 #ifdef SCRIPTS
     AddSC_event_april();
     AddSC_Loskutik();
-    AddSC_midsummer_fire_festival();
     AddSC_bracket_commandscript();
     AddSC_multi_vendor();
     AddSC_traffic_commandscript();
@@ -1931,10 +1929,8 @@ void AddCustomScripts()
     AddSC_Duel();
     AddSC_arena_spectator_script();
     AddSC_custom_arena_1v1();
-    AddSC_GOMove_commandscript();
     AddSC_npc_quest_giver();
     AddSC_npc_PetBattleTrainer();
-    AddSC_darkmoon();
     AddSC_event_tarecgosa();
     Addsc_dalaran_invasion();
     AddSC_solocraft();
@@ -2443,6 +2439,14 @@ void AddEasternKingdomsScripts()
     AddSC_western_plaguelands();
     AddSC_westfall();
     AddSC_wetlands();
+#endif
+}
+
+void EventsScripts()
+{
+#ifdef SCRIPTS
+    AddSC_darkmoon();
+    AddSC_midsummer_fire_festival();
 #endif
 }
 

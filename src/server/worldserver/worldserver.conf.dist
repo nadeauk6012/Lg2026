@@ -1030,6 +1030,14 @@ MaxJusticePoints = 400000
 
 StartJusticePoints = 0
 
+#
+#    FastFishing
+#        Description: Makes fishing faster, or removes the wait entirely.
+#        Default:     0  - (Disabled)
+#                     1  - (Faster)
+#                     2  - (Instant)
+
+FastFishing = 0
 
 #
 #    MaxArenaPoints

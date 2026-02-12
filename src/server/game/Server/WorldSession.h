@@ -1597,8 +1597,6 @@ class WorldSession
 
         void HandleTransmogrifyItems(WorldPackets::Transmogrification::TransmogrifyItems& transmogrifyItems);
 
-        void SendQuestgiverStatusMultipleQuery();
-
         bool processChatmessageFurtherAfterSecurityChecks(std::string&, uint32);
         void HandleChatMessageOpcode(WorldPackets::Chat::ChatMessage& packet);
         void HandleChatMessageAFK(WorldPackets::Chat::ChatMessageAFK& packet);
@@ -1921,6 +1919,7 @@ class WorldSession
         void HandleGarrisonCompleteMission(WorldPackets::Garrison::GarrisonCompleteMission& packet);
         void HandleCreateShipment(WorldPackets::Garrison::CreateShipment& packet);
         void HandleGarrisonRequestShipmentInfo(WorldPackets::Garrison::GarrisonRequestShipmentInfo& packet);
+		bool AdventureMapPOIAvailable(uint32 adventureMapPOIID);
         void HandleGarrisonResearchTalent(WorldPackets::Garrison::GarrisonRequestResearchTalent& packet);
         void HandleGarrisonOpenMissionNpc(WorldPackets::Garrison::GarrisonOpenMissionNpcRequest& packet);
         void HandleUpgradeGarrison(WorldPackets::Garrison::UpgradeGarrison& packet);

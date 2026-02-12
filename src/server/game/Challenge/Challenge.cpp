@@ -473,6 +473,11 @@ void Challenge::Complete()
         player->RemoveAura(ChallengersBurden);
         player->CastSpell(player, SPELL_CHALLENGE_ANTIKICK, true);
         player->KilledMonsterCredit(542180); // for daily event quest
+
+        if (_challengeLevel >= 15 && player->GetMap()->GetDifficultyID() == DIFFICULTY_MYTHIC_DUNGEON)
+            if (!player->HasAchieved(11162))
+                if (auto ArtKey = sAchievementStore.LookupEntry(11162))
+                    player->CompletedAchievement(ArtKey);
     });
 
     if (GetChallengeTimer() < 9 * MINUTE)

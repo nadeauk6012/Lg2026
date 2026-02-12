@@ -49,7 +49,6 @@ if (MSVC)
     ${protobuf_STAT_SRCS}
     src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc
   )
- 
 else()
   set(protobuf_STAT_SRCS
     ${protobuf_STAT_SRCS}

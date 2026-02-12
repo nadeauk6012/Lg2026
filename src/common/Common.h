@@ -30,7 +30,7 @@
 #include <signal.h>
 #include <assert.h>
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if PLATFORM == TC_PLATFORM_WINDOWS
 #define STRCASECMP stricmp
 #else
 #define STRCASECMP strcasecmp
@@ -54,7 +54,7 @@
 #include <boost/any.hpp>
 #include "Debugging/Errors.h"
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if PLATFORM == TC_PLATFORM_WINDOWS
 #  include <ws2tcpip.h>
 
 #  if defined(__INTEL_COMPILER)
@@ -78,7 +78,7 @@
 
 #define I32FMT "%08I32X"
 #define I64FMT "%016I64X"
-#define snprintf _snprintf
+//#define snprintf _snprintf
 #define atoll _atoi64
 #define vsnprintf _vsnprintf
 #define finite(X) _finite(X)

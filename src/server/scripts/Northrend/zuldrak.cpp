@@ -576,8 +576,9 @@ enum eOrinokoTuskbreaker
 
     NPC_WHISKER             = 30113,
     NPC_HUNGRY_PENGUIN      = 30110,
-
-    SAY_CALL_FOR_HELP       = -1571032
+	
+	SAY_CALL_FOR_HELP       = 40
+    //SAY_CALL_FOR_HELP       = -1571032
 };
 
 class npc_orinoko_tuskbreaker : public CreatureScript
