@@ -3256,7 +3256,7 @@ public:
 
         void EnterEvadeMode() override
         {
-            if (me->IsInEvadeMode() || !me->IsAlive())
+            if (me->IsInEvadeMode() || !me->isAlive())
                 return;
 
             Unit* owner = me->GetOwner();
