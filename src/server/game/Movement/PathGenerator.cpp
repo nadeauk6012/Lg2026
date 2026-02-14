@@ -334,7 +334,7 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
             Creature* owner = (Creature*)_sourceUnit;
 
             G3D::Vector3 const& p = (distToStartPoly > 7.0f) ? startPos : endPos;
-            if (_sourceUnit->GetMap()->IsUnderWater(p))
+            if (_source->GetBaseMap()->IsUnderWater(p.x, p.y, p.z)) // TODO: support phasing
             {
                 if (_sourceUnit->IsPlayer() || _sourceUnit->isSummon())
                     TC_LOG_DEBUG(LOG_FILTER_PATH_GENERATOR, "++ BuildPolyPath :: underWater case\n");
