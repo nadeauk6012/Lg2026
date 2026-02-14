@@ -1493,8 +1493,6 @@ void World::LoadConfigSettings(bool reload)
     // Cross Faction BG
     m_bool_configs[CONFIG_CROSSFACTIONBG] = sConfigMgr->GetBoolDefault("MixedBGs", false);
 
-    m_bool_configs[CONFIG_RESTRUCT_GUID] = sConfigMgr->GetBoolDefault("Restruct.Guid", false);
-
     //Time Zone
     m_serverTimeTZ = sConfigMgr->GetStringDefault("ServerTimeTZ", "Europe/Paris");// == number of seconds elapsed since 00:00 hours, Jan 1, 1970 UTC
     m_gameTimeTZ = sConfigMgr->GetStringDefault("GameTimeTZ", "Europe/Paris"); // == number of seconds elapsed since 00:00 hours, Jan 1, 1970 UTC
@@ -1705,15 +1703,6 @@ void World::SetInitialWorldSettings()
     // Must be called before `creature_respawn`/`gameobject_respawn` tables
     TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, "Loading instances...");
     sInstanceSaveMgr->LoadInstances();
-
-    if (m_bool_configs[CONFIG_RESTRUCT_GUID])
-    {
-        TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, "Restructuring Creatures GUIDs...");
-        sObjectMgr->RestructCreatureGUID();
-
-        TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, "Restructuring Gameobjects GUIDs...");
-        sObjectMgr->RestructGameObjectGUID();
-    }
 
     std::thread locales([]() -> void
     {

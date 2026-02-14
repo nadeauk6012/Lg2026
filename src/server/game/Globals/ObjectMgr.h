@@ -16,8 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _OBJECTMGR_H
-#define _OBJECTMGR_H
+#ifndef OBJECTMGR_H
+#define OBJECTMGR_H
 
 #include "Conversation.h"
 #include "Log.h"
@@ -735,15 +735,13 @@ class ObjectMgr
         void LoadCreatureTemplateAddons();
         void CheckCreatureTemplate(CreatureTemplate const* cInfo);
         void CheckCreatureTemplateWDB(CreatureTemplate* cInfo);
-        void RestructCreatureGUID();
-        void RestructGameObjectGUID();
         void LoadTempSummons();
         void LoadCreatures();
         void LoadCreatureAIInstance();
         void LoadCreatureActionData();
         void LoadDisplayChoiceData();
-    void LoadPlayerChoicesLocale();
-    void LoadLinkedRespawn();
+        void LoadPlayerChoicesLocale();
+        void LoadLinkedRespawn();
         bool SetCreatureLinkedRespawn(ObjectGuid::LowType const& guid, ObjectGuid::LowType const& linkedGuid);
         void LoadCreatureAddons();
         void LoadCreatureModelInfo();

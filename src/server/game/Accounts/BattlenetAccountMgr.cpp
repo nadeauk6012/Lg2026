@@ -21,7 +21,7 @@
 #include "Util.h"
 #include "SHA256.h"
 
-AccountOpResult Battlenet::AccountMgrNet::CreateBattlenetAccount(std::string email, std::string password, bool withGameAccount, std::string* gameAccountName)
+AccountOpResult Battlenet::AccountMgr::CreateBattlenetAccount(std::string email, std::string password, bool withGameAccount, std::string* gameAccountName)
 {
     if (utf8length(email) > MAX_BNET_EMAIL_STR)
         return AccountOpResult::AOR_NAME_TOO_LONG;
@@ -112,7 +112,7 @@ AccountOpResult Battlenet::AccountMgrNet::LinkWithGameAccount(std::string const&
 
 AccountOpResult Battlenet::AccountMgrNet::UnlinkGameAccount(std::string const& gameAccountName)
 {
-    uint32 gameAccountId = AccountMgrNet::GetId(gameAccountName);
+    uint32 gameAccountId = AccountMgr::GetId(gameAccountName);
     if (!gameAccountId)
         return AccountOpResult::AOR_NAME_NOT_EXIST;
 

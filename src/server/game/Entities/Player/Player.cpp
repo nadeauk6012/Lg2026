@@ -1167,23 +1167,16 @@ void Player::ApplyOnItems(uint8 type, std::function<bool(Player*, Item*, uint8, 
     }
 }
 
-void Player::SendMirrorTimer(MirrorTimerType type, uint32 maxValue, uint32 currentValue, int32 regen)
+void Player::SendMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, int32 Regen)
 {
-    if (int(maxValue) == DISABLED_MIRROR_TIMER)
+    if (int(MaxValue) == DISABLED_MIRROR_TIMER)
     {
-        if (int(currentValue) != DISABLED_MIRROR_TIMER)
-            StopMirrorTimer(type);
+        if (int(CurrentValue) != DISABLED_MIRROR_TIMER)
+            StopMirrorTimer(Type);
         return;
     }
 
-    WorldPackets::Misc::StartMirrorTimer timer;
-    timer.Scale = regen;
-    timer.MaxValue = maxValue;
-    timer.Timer = type;
-    timer.SpellID = 0;
-    timer.Value = currentValue;
-    timer.Paused = false;
-    SendDirectMessage(timer.Write());
+    GetSession()->SendPacket(WorldPackets::Misc::StartMirrorTimer(Type, CurrentValue, MaxValue, Regen, 0, 0).Write());
 }
 
 void Player::StopMirrorTimer(MirrorTimerType timer)
@@ -1245,27 +1238,29 @@ uint32 Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
     return final_damage;
 }
 
-int32 Player::getMaxTimer(MirrorTimerType timer)
+int32 Player::getMaxTimer(MirrorTimerType timer) const
 {
     switch (timer)
     {
-        case FATIGUE_TIMER:
-            return MINUTE * IN_MILLISECONDS;
-        case BREATH_TIMER:
-        {
-            if (!isAlive() || HasAuraType(SPELL_AURA_WATER_BREATHING) || GetSession()->GetSecurity() >= AccountTypes(sWorld->getIntConfig(CONFIG_DISABLE_BREATHING)))
-                return DISABLED_MIRROR_TIMER;
+    case FATIGUE_TIMER:
+        return MINUTE * IN_MILLISECONDS;
+    case BREATH_TIMER:
+    {
+        if (!IsAlive() || HasAuraType(SPELL_AURA_WATER_BREATHING) || GetSession()->GetSecurity() >= AccountTypes(sWorld->getIntConfig(CONFIG_DISABLE_BREATHING)))
+            return DISABLED_MIRROR_TIMER;
 
-            return (3 * MINUTE * IN_MILLISECONDS) * GetTotalAuraMultiplier(SPELL_AURA_MOD_WATER_BREATHING);
-        }
-        case FIRE_TIMER:
-        {
-            if (!isAlive())
-                return DISABLED_MIRROR_TIMER;
-            return 1 * IN_MILLISECONDS;
-        }
-        default:
-            return 0;
+        int32 UnderWaterTime = 3 * MINUTE * IN_MILLISECONDS;
+        UnderWaterTime *= GetTotalAuraMultiplier(SPELL_AURA_MOD_WATER_BREATHING);
+        return UnderWaterTime;
+    }
+    case FIRE_TIMER:
+    {
+        if (!IsAlive())
+            return DISABLED_MIRROR_TIMER;
+        return 1 * IN_MILLISECONDS;
+    }
+    default:
+        return 0;
     }
 }
 
@@ -1283,7 +1278,7 @@ void Player::StopMirrorTimers()
     StopMirrorTimer(FIRE_TIMER);
 }
 
-bool Player::IsMirrorTimerActive(MirrorTimerType type)
+bool Player::IsMirrorTimerActive(MirrorTimerType type) const
 {
     return m_MirrorTimer[type] == getMaxTimer(type);
 }
@@ -1291,8 +1286,8 @@ bool Player::IsMirrorTimerActive(MirrorTimerType type)
 void Player::HandleDrowning(uint32 time_diff)
 {
     //! Why? We need remove state when where is no flag.
-    //if (!m_MirrorTimerFlags)
-    //    return;
+    if (!m_MirrorTimerFlags)
+        return;
 
     // In water
     if (m_MirrorTimerFlags & UNDERWATER_INWATER)
@@ -32088,10 +32083,20 @@ void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
     }
 
 
-    // All liquids type - check under water position
+    // All liquids type - check "head under water" for breathing
     if (liquid_status.type_flags & (MAP_LIQUID_TYPE_WATER | MAP_LIQUID_TYPE_OCEAN | MAP_LIQUID_TYPE_MAGMA | MAP_LIQUID_TYPE_SLIME))
     {
-        if (Zliquid_status & LIQUID_MAP_UNDER_WATER)
+        bool headUnder = false;
+
+        // only meaningful if we're in/under water at the unit position
+        if (res & (LIQUID_MAP_IN_WATER | LIQUID_MAP_UNDER_WATER))
+        {
+            // Tune factor (0.7f�0.9f).
+            float headZ = z + (GetCollisionHeight() * 0.9f);
+            headUnder = liquid_status.level > headZ;
+        }
+
+        if (headUnder)
             m_MirrorTimerFlags |= UNDERWATER_INWATER;
         else
             m_MirrorTimerFlags &= ~UNDERWATER_INWATER;
