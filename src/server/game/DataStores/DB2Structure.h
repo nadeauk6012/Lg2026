@@ -922,6 +922,16 @@ struct CharacterFaceBoneSetEntry
     uint8       Resolution;
 };
 
+struct Cfg_RegionsEntry
+{
+    uint32 ID;
+    char const* Tag;
+    uint32 Raidorigin;                                              // Date of first raid reset, all other resets are calculated as this date plus interval
+    uint32 ChallengeOrigin;
+    uint16 RegionID;
+    uint8 RegionGroupMask;
+};
+
 // FileOptions: Index, None
 struct CharacterFacialHairStylesEntry
 {

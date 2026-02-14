@@ -87,6 +87,7 @@ DB2Storage<BoneWindModifiersEntry>              sBoneWindModifiersStore("BoneWin
 DB2Storage<BountyEntry>                         sBountyStore("Bounty.db2", BountyLoadInfo::Instance());
 DB2Storage<BountySetEntry>                      sBountySetStore("BountySet.db2", BountySetLoadInfo::Instance());
 DB2Storage<BroadcastTextEntry>                  sBroadcastTextStore("BroadcastText.db2", BroadcastTextLoadInfo::Instance());
+DB2Storage<Cfg_RegionsEntry>                    sCfgRegionsStore("Cfg_Regions.db2", CfgRegionsLoadInfo::Instance());
 DB2Storage<CameraEffectEntry>                   sCameraEffectStore("CameraEffect.db2", CameraEffectLoadInfo::Instance());
 DB2Storage<CameraEffectEntryEntry>              sCameraEffectEntryStore("CameraEffectEntry.db2", CameraEffectEntryLoadInfo::Instance());
 DB2Storage<CameraModeEntry>                     sCameraModeStore("CameraMode.db2", CameraModeLoadInfo::Instance());
@@ -1028,6 +1029,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     //LOAD_DB2(sBountyStore);
     //LOAD_DB2(sBountySetStore);
     LOAD_DB2(sBroadcastTextStore);
+    LOAD_DB2(sCfgRegionsStore);
     //LOAD_DB2(sCameraEffectStore);
     //LOAD_DB2(sCameraEffectEntryStore);
     //LOAD_DB2(sCameraModeStore);

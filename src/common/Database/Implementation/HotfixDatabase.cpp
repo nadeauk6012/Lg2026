@@ -337,6 +337,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_CHARACTER_FACE_BONE_SET, "SELECT ID, BoneSetFileDataID, SexID, FaceVariationIndex, Resolution"
         " FROM character_face_bone_set ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // CfgRegions.db2
+    PrepareStatement(HOTFIX_SEL_CFG_REGIONS, "SELECT ID, Tag, Raidorigin, ChallengeOrigin, RegionID, RegionGroupMask FROM cfg_regions ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // CharacterFacialHairStyles.db2
     PrepareStatement(HOTFIX_SEL_CHARACTER_FACIAL_HAIR_STYLES, "SELECT ID, Geoset1, Geoset2, Geoset3, Geoset4, Geoset5, RaceID, SexID, VariationID"
         " FROM character_facial_hair_styles ORDER BY ID DESC", CONNECTION_SYNCH);
