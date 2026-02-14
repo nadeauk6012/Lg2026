@@ -1255,7 +1255,7 @@ int32 Player::getMaxTimer(MirrorTimerType timer) const
     }
     case FIRE_TIMER:
     {
-        if (!IsAlive())
+        if (!isAlive())
             return DISABLED_MIRROR_TIMER;
         return 1 * IN_MILLISECONDS;
     }
