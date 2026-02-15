@@ -32,9 +32,19 @@ void WorldSession::HandleBattlePetSummon(WorldPackets::BattlePet::BattlePetGuidR
     if (_player->IsOnVehicle() || _player->IsSitState())
         return;
 
-    _player->UnsummonCurrentBattlePetIfAny(false);
-    if (!_player->GetSummonedBattlePet() || _player->GetSummonedBattlePet()->GetGuidValue(UNIT_FIELD_BATTLE_PET_COMPANION_GUID) != packet.BattlePetGUID)
-        _player->SummonBattlePet(packet.BattlePetGUID);
+    Creature* summonedPet = _player->GetSummonedBattlePet();
+    if (summonedPet)
+    {
+        if (summonedPet->GetGuidValue(UNIT_FIELD_BATTLE_PET_COMPANION_GUID) == packet.BattlePetGUID)
+        {
+            _player->UnsummonCurrentBattlePetIfAny(false);
+            return;
+        }
+
+        _player->UnsummonCurrentBattlePetIfAny(false);
+    }
+
+    _player->SummonBattlePet(packet.BattlePetGUID);
 }
 
 void WorldSession::HandleBattlePetNameQuery(WorldPackets::BattlePet::Query& packet)
