@@ -1782,7 +1782,7 @@ void GameObject::Use(Unit* user)
             else
                 SetGoState(GO_STATE_ACTIVE);
 
-            m_cooldownTime = GameTime::GetGameTimeMS() + info->GetAutoCloseTime();
+            m_cooldownTime = time(nullptr) + (info->GetAutoCloseTime() ? info->GetAutoCloseTime() : 60);
 
             // cast this spell later if provided
             spellId = info->goober.spell;
