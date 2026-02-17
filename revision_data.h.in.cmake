@@ -14,7 +14,6 @@
  #define VER_LEGALCOPYRIGHT_STR     "(c)2008-2026 TrinityCore"
  #define VER_FILEVERSION            0,4,0
  #define VER_FILEVERSION_STR        "@rev_hash@ @rev_date@ (@rev_branch@ branch)"
- #define VER_FILEVERSION_STR        "BHCORE"
  #define VER_PRODUCTVERSION         VER_FILEVERSION
  #define VER_PRODUCTVERSION_STR     VER_FILEVERSION_STR
 #endif // __REVISION_DATA_H__
