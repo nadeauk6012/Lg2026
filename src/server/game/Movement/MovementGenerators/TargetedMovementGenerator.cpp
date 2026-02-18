@@ -568,30 +568,6 @@ static Position const PredictPosition(Unit* target)
     return pos;
 }
 
-bool IsMovementPreventedByCasting(Creature* owner)
-{
-    Spell* spell = owner->GetCurrentSpell(CURRENT_CHANNELED_SPELL);
-    // first check if currently a movement allowed channel is active and we're not casting
-    if (spell && spell->getState() != SPELL_STATE_FINISHED && spell->IsChannelActive() &&
-        (spell->GetSpellInfo() && spell->GetSpellInfo()->IsChanneled() && spell->GetSpellInfo()->HasAttribute(SPELL_ATTR5_USABLE_WHILE_MOVING))
-        )
-    {
-        return false;
-    }
-
-    /*if (owner->HasSpellFocus())
-    {
-        return true;
-    }*/
-
-    if (owner->HasUnitState(UNIT_STATE_CASTING))
-    {
-        return true;
-    }
-
-    return false;
-}
-
 template<class T>
 bool FollowMovementGenerator<T>::DoUpdate(T& owner, uint32 time_diff)
 {
