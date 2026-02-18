@@ -581,7 +581,7 @@ bool FollowMovementGenerator<T>::DoUpdate(T& owner, uint32 time_diff)
     Unit* target = this->i_target.getTarget();
 
     // the owner might be unable to move (rooted or casting), or we have lost the target, pause movement
-    if (owner.HasUnitState(UNIT_STATE_NOT_MOVE) || (cOwner && IsMovementPreventedByCasting(owner.ToCreature())))
+    if (owner.HasUnitState(UNIT_STATE_NOT_MOVE) || (cOwner && owner.IsMovementPreventedByCasting()))
     {
         i_path = nullptr;
         owner.StopMoving();
