@@ -532,7 +532,7 @@ public:
 		}
 	};
 
-	SpellScript* GetSpellScript() const override
+	SpellScript* GetSpellScript() const
 	{
 		return new spell_gen_pet_summoned_SpellScript();
 	}
