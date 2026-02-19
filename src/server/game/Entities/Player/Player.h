@@ -345,29 +345,20 @@ enum ActionButtonType
 
 struct ActionButton
 {
-    ActionButton() : packedData(0), uState(ACTIONBUTTON_NEW) { }
+    ActionButton(uint32 action, uint8 type, ActionButtonUpdateState state);
+    ActionButtonType GetType() const;
+    uint32 GetAction() const;
+    void SetActionAndType(uint32 action, ActionButtonType type);
 
     uint64 packedData;
+    uint32 uAction;
     ActionButtonUpdateState uState;
-
-    // helpers
-    ActionButtonType GetType() const { return ActionButtonType(ACTION_BUTTON_TYPE(packedData)); }
-    uint32 GetAction() const { return ACTION_BUTTON_ACTION(packedData); }
-    void SetActionAndType(uint32 action, ActionButtonType type)
-    {
-        uint64 newData = uint64(action) | (uint64(type) << 56);
-        if (newData != packedData || uState == ACTIONBUTTON_DELETED)
-        {
-            packedData = newData;
-            if (uState != ACTIONBUTTON_NEW)
-                uState = ACTIONBUTTON_CHANGED;
-        }
-    }
+    uint8 uType;
 };
 
 #define  MAX_ACTION_BUTTONS 132                             //checked in 5.0.5
 
-typedef std::map<uint8, ActionButton> ActionButtonList;
+typedef std::map<uint16, ActionButton> ActionButtonList;
 
 struct PlayerCreateInfoItem
 {
@@ -2411,12 +2402,14 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetMovie() const { return m_movie; }
         void SetMovie(uint32 movie) { m_movie = movie; }
 
-        ActionButton* AddActionButton(uint8 button, uint32 action, uint8 type);
-        void RemoveActionButton(uint8 button);
+        bool addActionButton(uint8 button, uint32 action, uint8 type, ActionButtonUpdateState state = ACTIONBUTTON_NEW);
+        void removeActionButton(uint8 button);
         ActionButton const* GetActionButton(uint8 button);
         void SendInitialActionButtons() { SendActionButtons(0); }
         void SendActionButtons(uint32 state);
         bool IsActionButtonDataValid(uint8 button, uint32 action, uint8 type);
+
+        int8 GetFreeActionButton();
 
         PvPInfo pvpInfo;
         void UpdatePvPState(bool onlyFFA = false);

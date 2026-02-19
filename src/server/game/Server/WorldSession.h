@@ -1164,7 +1164,7 @@ class WorldSession
         void SendStableResult(StableResultCode res);
 
         // Account Data
-        AccountData const* GetAccountData(AccountDataType type) const { return &m_accountData[type]; }
+        AccountData* GetAccountData(AccountDataType type);
         void SetAccountData(AccountDataType type, time_t tm = time_t(0), std::string const& data = "");
         void SendSetTimeZoneInformation();
         void LoadAccountData(PreparedQueryResult const& result, uint32 mask);
