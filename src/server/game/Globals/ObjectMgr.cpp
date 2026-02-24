@@ -1547,14 +1547,14 @@ void ObjectMgr::LoadLinkedRespawn()
                 const MapEntry* const map = sMapStore.LookupEntry(master->mapid);
                 if (!map || !map->Instanceable() || (master->mapid != slave->mapid))
                 {
-                    TC_LOG_ERROR(LOG_FILTER_SQL, "Creature '" UI64FMTD "' linking to '%lu' on an unpermitted map.", guidLow, linkedGuidLow);
+                    TC_LOG_ERROR(LOG_FILTER_SQL, "Creature '" UI64FMTD "' linking to '%u' on an unpermitted map.", guidLow, linkedGuidLow);
                     error = true;
                     break;
                 }
 
                 if (!(master->spawnMask & slave->spawnMask))  // they must have a possibility to meet (normal/heroic difficulty)
                 {
-                    TC_LOG_ERROR(LOG_FILTER_SQL, "LinkedRespawn: Creature '" UI64FMTD "' linking to '%lu' with not corresponding spawnMask", guidLow, linkedGuidLow);
+                    TC_LOG_ERROR(LOG_FILTER_SQL, "LinkedRespawn: Creature '" UI64FMTD "' linking to '%u' with not corresponding spawnMask", guidLow, linkedGuidLow);
                     error = true;
                     break;
                 }
@@ -1584,7 +1584,7 @@ void ObjectMgr::LoadLinkedRespawn()
                 const MapEntry* const map = sMapStore.LookupEntry(master->mapid);
                 if (!map || !map->Instanceable() || (master->mapid != slave->mapid))
                 {
-                    TC_LOG_ERROR(LOG_FILTER_SQL, "Creature '" UI64FMTD "' linking to '%lu' on an unpermitted map.", guidLow, linkedGuidLow);
+                    TC_LOG_ERROR(LOG_FILTER_SQL, "Creature '" UI64FMTD "' linking to '%u' on an unpermitted map.", guidLow, linkedGuidLow);
                     error = true;
                     break;
                 }
@@ -1960,7 +1960,7 @@ void ObjectMgr::LoadCreatures()
         {
             if (!IsTransportMap(data.mapid) && data.spawnMask & ~spawnMasks[data.mapid])
             {
-                TC_LOG_ERROR(LOG_FILTER_SQL, "Table `creature` have creature (GUID: " UI64FMTD ") that have wrong spawn mask " UI64FMTD " including not supported difficulty modes for map (Id: %u) spawnMasks[data.mapid]: %lu.", guid, data.spawnMask, data.mapid, spawnMasks[data.mapid]);
+                TC_LOG_ERROR(LOG_FILTER_SQL, "Table `creature` have creature (GUID: " UI64FMTD ") that have wrong spawn mask " UI64FMTD " including not supported difficulty modes for map (Id: %u) spawnMasks[data.mapid]: %u.", guid, data.spawnMask, data.mapid, spawnMasks[data.mapid]);
                 WorldDatabase.PExecute("UPDATE creature SET spawnMask = " UI64FMTD " WHERE guid = %u", spawnMasks[data.mapid], guid);
                 data.spawnMask = spawnMasks[data.mapid];
             }
@@ -2298,7 +2298,7 @@ bool ObjectMgr::MoveCreData(ObjectGuid::LowType const& guid, uint32 mapId, Posit
             Creature* creature = new Creature;
             if (!creature->LoadCreatureFromDB(guid, map))
             {
-                TC_LOG_ERROR(LOG_FILTER_GENERAL, "AddCreature: cannot add creature entry %lu to map", guid);
+                TC_LOG_ERROR(LOG_FILTER_GENERAL, "AddCreature: cannot add creature entry %u to map", guid);
                 delete creature;
                 return false;
             }
@@ -2583,7 +2583,7 @@ void ObjectMgr::LoadGameobjects()
                     lastGo->second->spawnMask |= data.spawnMask;
                     WorldDatabase.PExecute("UPDATE gameobject SET phaseMask = %u, spawnMask = " UI64FMTD " WHERE guid = %u", lastGo->second->phaseMask, lastGo->second->spawnMask, lastGo->second->guid);
                     WorldDatabase.PExecute("DELETE FROM gameobject WHERE guid = %u", guid);
-                    TC_LOG_ERROR(LOG_FILTER_SQL, "Table `gameobject` have clone go %u witch stay too close (dist: %f). original go guid %lu. go with guid %lu will be deleted.", entry, distsq1, lastGo->second->guid, guid);
+                    TC_LOG_ERROR(LOG_FILTER_SQL, "Table `gameobject` have clone go %u witch stay too close (dist: %f). original go guid %u. go with guid %u will be deleted.", entry, distsq1, lastGo->second->guid, guid);
                     continue;
                 }
             }
@@ -4837,15 +4837,13 @@ void ObjectMgr::SetHighestGuids()
         ObjectAccessor::SetGuidSize(HighGuid::Player, (*result)[0].GetUInt64() + 1);
     }
 
-    result = WorldDatabase.Query("SELECT MAX(guid) FROM creature");
-    if (result)
+    if (result = WorldDatabase.Query("SELECT MAX(guid) FROM creature"))
     {
         _creatureGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::Creature, (*result)[0].GetUInt64() + 1);
     }
 
-    result = CharacterDatabase.Query("SELECT MAX(guid) FROM item_instance");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(guid) FROM item_instance"))
         _itemGuidGenerator.Set((*result)[0].GetUInt64() + 1);
 
     // Cleanup other tables from not existed guids ( >= _hiItemGuid)
@@ -4854,79 +4852,64 @@ void ObjectMgr::SetHighestGuids()
     CharacterDatabase.PExecute("DELETE FROM auctionhouse WHERE itemguid >= '%u'", _itemGuidGenerator.GetNextAfterMaxUsed());         // One-time query
     CharacterDatabase.PExecute("DELETE FROM guild_bank_item WHERE item_guid >= '%u'", _itemGuidGenerator.GetNextAfterMaxUsed());     // One-time query
 
-    result = WorldDatabase.Query("SELECT MAX(guid) FROM gameobject");
-    if (result)
+    if (result = WorldDatabase.Query("SELECT MAX(guid) FROM gameobject"))
     {
         _gameObjectGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::GameObject, (*result)[0].GetUInt64() + 1);
     }
 
-    result = WorldDatabase.Query("SELECT MAX(guid) FROM transports");
-    if (result)
+    if (result = WorldDatabase.Query("SELECT MAX(guid) FROM transports"))
     {
         _moTransportGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::Transport, (*result)[0].GetUInt64() + 1);
     }
 
-    result = CharacterDatabase.Query("SELECT MAX(id) FROM auctionhouse");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(id) FROM auctionhouse"))
         _auctionId = (*result)[0].GetUInt32()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(id) FROM mail");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(id) FROM mail"))
         _mailId = (*result)[0].GetUInt32()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(corpseGuid) FROM corpse");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(corpseGuid) FROM corpse"))
     {
         _corpseGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::Corpse, (*result)[0].GetUInt64() + 1);
     }
 
-    result = WorldDatabase.Query("SELECT MAX(guid) FROM conversation");
-    if (result)
+    if (result = WorldDatabase.Query("SELECT MAX(guid) FROM conversation"))
     {
         _conversationGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::Conversation, (*result)[0].GetUInt64() + 1);
     }
 
-    result = CharacterDatabase.Query("SELECT MAX(setguid) FROM character_equipmentsets");
-    if (result))
+    if (result = CharacterDatabase.Query("SELECT MAX(setguid) FROM character_equipmentsets"))
         _equipmentSetGuid = (*result)[0].GetUInt64()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_complaints");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_complaints"))
         _reportComplaintID = (*result)[0].GetUInt64()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_bugreport");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(ID) FROM report_bugreport"))
         _supportTicketSubmitBugID = (*result)[0].GetUInt64()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(guildId) FROM guild");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(guildId) FROM guild"))
         sGuildMgr->SetNextGuildId((*result)[0].GetUInt64()+1);
 
-    result = CharacterDatabase.Query("SELECT MAX(guid) FROM `groups`");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(guid) FROM `groups`"))
         sGroupMgr->SetGroupDbStoreSize((*result)[0].GetUInt32()+1);
 
-    result = CharacterDatabase.Query("SELECT MAX(itemId) from character_void_storage");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(itemId) from character_void_storage"))
         _voidItemId = (*result)[0].GetUInt64()+1;
 
-    result = CharacterDatabase.Query("SELECT MAX(id) FROM account_battlepet");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(id) FROM account_battlepet"))
         _BattlePetGuidGenerator.Set((*result)[0].GetUInt64() + 1);
 
-    result = WorldDatabase.Query("SELECT MAX(guid) FROM eventobject");
-    if (result)
+    if (result = WorldDatabase.Query("SELECT MAX(guid) FROM eventobject"))
     {
         _EventObjectGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::EventObject, (*result)[0].GetUInt64() + 1);
     }
 
-    result = CharacterDatabase.Query("SELECT MAX(ID) FROM challenge");
-    if (result)
+    if (result = CharacterDatabase.Query("SELECT MAX(ID) FROM challenge"))
     {
         _scenarioGuidGenerator.Set((*result)[0].GetUInt64() + 1);
         ObjectAccessor::SetGuidSize(HighGuid::Scenario, (*result)[0].GetUInt64() + 1);
@@ -5579,7 +5562,7 @@ void ObjectMgr::LoadCorpses()
         CorpseType type = CorpseType(fields[12].GetUInt8());
         if (type >= MAX_CORPSE_TYPE)
         {
-            TC_LOG_ERROR(LOG_FILTER_GENERAL, "Corpse (guid: %lu) have wrong corpse type (%u), not loading.", guid, type);
+            TC_LOG_ERROR(LOG_FILTER_GENERAL, "Corpse (guid: %u) have wrong corpse type (%u), not loading.", guid, type);
             continue;
         }
 
@@ -7768,7 +7751,7 @@ void ObjectMgr::LoadDigSitePositions()
     for (std::set<uint32>::const_iterator itr = toRemove.begin(); itr != toRemove.end(); ++itr)
         sDB2Manager._researchSiteDataMap.erase(*itr);
 
-    TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, ">> Loaded %u dig site positions _researchSiteDataMap %zu", counter, sDB2Manager._researchSiteDataMap.size());
+    TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, ">> Loaded %u dig site positions _researchSiteDataMap %u", counter, sDB2Manager._researchSiteDataMap.size());
 }
 
 void ObjectMgr::LoadScenarioData()

@@ -701,7 +701,7 @@ void BattlegroundMgr::SendToBattleground(Player* player, uint32 instanceId, uint
     if (Battleground* bg = GetBattleground(instanceId, bgTypeId))
         player->TeleportTo(bg->GetMapId(), bg->GetTeamStartPosition(player->GetBGTeamId()));
     else
-        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "player %lu is trying to port to non-existent bg instance %u", player->GetGUID().GetCounter(), instanceId);
+        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "player %u is trying to port to non-existent bg instance %u", player->GetGUID().GetCounter(), instanceId);
 }
 
 BattlegroundQueue& BattlegroundMgr::GetBattlegroundQueue(uint8 bgQueueTypeId)

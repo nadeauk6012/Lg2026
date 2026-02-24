@@ -59,10 +59,7 @@ bool GmTicket::LoadFromDB(Field* fields)
     _message            = fields[++index].GetString();
     _createTime         = fields[++index].GetUInt32();
     _mapId              = fields[++index].GetUInt16();
-    auto x        = fields[++index].GetFloat();
-    auto y        = fields[++index].GetFloat();
-    auto z        = fields[++index].GetFloat();
-    _pos                = Position(x, y, z);
+    _pos                = Position(fields[++index].GetFloat(), fields[++index].GetFloat(), fields[++index].GetFloat());
     _lastModifiedTime   = fields[++index].GetUInt32();
     int64 closedBy = fields[++index].GetInt64();
     if (closedBy < 0)

@@ -34,6 +34,38 @@ MembershipRequest::MembershipRequest(MembershipRequest const& settings) : _comme
 MembershipRequest::MembershipRequest(ObjectGuid const& playerGUID, ObjectGuid const& guildId, uint32 availability, uint32 classRoles, uint32 playStyle, std::string& comment, time_t submitTime) : _guildId(guildId), _playerGUID(playerGUID), _time(submitTime), _comment(comment), _availability(availability), _classRoles(classRoles), _playStyle(playStyle) {}
 MembershipRequest::MembershipRequest() : _time(time(nullptr)), _availability(0), _classRoles(0), _playStyle(0) { }
 
+uint8 MembershipRequest::GetClass() const
+{
+    if (auto const& nameData = sWorld->GetCharacterInfo(_playerGUID))
+        return nameData->Class;
+
+    return 0;
+}
+
+uint8 MembershipRequest::GetLevel() const
+{
+    if (auto const& nameData = sWorld->GetCharacterInfo(_playerGUID))
+        return nameData->Level;
+
+    return 1;
+}
+
+std::string const& MembershipRequest::GetName() const
+{
+    if (auto const& nameData = sWorld->GetCharacterInfo(_playerGUID))
+        return nameData->Name;
+
+    return "";
+}
+
+uint8 MembershipRequest::GetGender() const
+{
+    if (auto const& nameData = sWorld->GetCharacterInfo(_playerGUID))
+        return nameData->Sex;
+
+    return 0;
+}
+
 time_t MembershipRequest::GetSubmitTime() const
 {
     return _time;
@@ -417,20 +449,16 @@ void GuildFinderMgr::SendApplicantListUpdate(Guild& guild)
         WorldPackets::Guild::LFGuildRecruitData data;
         data.RecruitGUID = x.GetPlayerGUID();
         data.RecruitVirtualRealm = GetVirtualRealmAddress();
-        data.Comment = x.GetComment();
+        data.CharacterClass = x.GetClass();
+        data.CharacterGender = x.GetGender();
+        data.CharacterLevel = x.GetLevel();
         data.ClassRoles = x.GetClassRoles();
         data.PlayStyle = x.GetPlayStyle();
         data.Availability = x.GetAvailability();
         data.SecondsSinceCreated = time(nullptr) - x.GetSubmitTime();
         data.SecondsUntilExpiration = x.GetExpiryTime() - time(nullptr);
-
-        if (CharacterInfo const* charInfo = sWorld->GetCharacterInfo(data.RecruitGUID))
-        {
-            data.Name = charInfo->Name;
-            data.CharacterClass = charInfo->Class;
-            data.CharacterGender = charInfo->Sex;
-            data.CharacterLevel = charInfo->Level;
-        }
+        data.Name = x.GetName();
+        data.Comment = x.GetComment();
         recruit.Recruits.push_back(data);
     }
 
@@ -452,19 +480,16 @@ void GuildFinderMgr::SendMembershipRequestListUpdate(Player& player)
         WorldPackets::Guild::LFGuildRecruitData data;
         data.RecruitGUID = x.GetPlayerGUID();
         data.RecruitVirtualRealm = GetVirtualRealmAddress();
-        data.Comment = x.GetComment();
+        data.CharacterClass = x.GetClass();
+        data.CharacterGender = x.GetGender();
+        data.CharacterLevel = x.GetLevel();
         data.ClassRoles = x.GetClassRoles();
         data.PlayStyle = x.GetPlayStyle();
         data.Availability = x.GetAvailability();
         data.SecondsSinceCreated = time(nullptr) - x.GetSubmitTime();
         data.SecondsUntilExpiration = x.GetExpiryTime() - time(nullptr);
-        if (CharacterInfo const* charInfo = sWorld->GetCharacterInfo(data.RecruitGUID))
-        {
-            data.Name = charInfo->Name;
-            data.CharacterClass = charInfo->Class;
-            data.CharacterGender = charInfo->Sex;
-            data.CharacterLevel = charInfo->Level;
-        }
+        data.Name = x.GetName();
+        data.Comment = x.GetComment();
         recruits.Recruits.push_back(data);
     }
 

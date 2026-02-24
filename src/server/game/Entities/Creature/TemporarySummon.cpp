@@ -560,7 +560,7 @@ void Minion::InitStats(uint32 duration)
 
 void Minion::RemoveFromWorld()
 {
-    if (!IsInWorld())
+    if (!IsInWorld() || !this)
         return;
 
     if (Unit* owner = GetSummoner())

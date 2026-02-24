@@ -1244,7 +1244,7 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
     CreatureTemplate const* cinfo = sObjectMgr->GetCreatureTemplate(entry);
     if (!cinfo)
     {
-        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature::Create(): creature template (guidlow: %lu, entry: %u) does not exist.", guidlow, entry);
+        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature::Create(): creature template (guidlow: %u, entry: %u) does not exist.", guidlow, entry);
         return false;
     }
 
@@ -1258,7 +1258,7 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
 
     if (!IsPositionValid())
     {
-        TC_LOG_ERROR(LOG_FILTER_UNITS, "Creature::Create(): given coordinates for creature (guidlow %ld, entry %d) are not valid (X: %f, Y: %f, Z: %f, O: %f)", guidlow, entry, x, y, z, ang);
+        TC_LOG_ERROR(LOG_FILTER_UNITS, "Creature::Create(): given coordinates for creature (guidlow %d, entry %d) are not valid (X: %f, Y: %f, Z: %f, O: %f)", guidlow, entry, x, y, z, ang);
         return false;
     }
 
@@ -1393,7 +1393,7 @@ void Creature::SetReactState(ReactStates st, uint32 delay /*= 0*/)
     if (m_reactState == st)
         return;
 
-    if (isInCombat())
+    if (delay && isInCombat())
     {
         AddDelayedCombat(delay, [this, st] () -> void
         {
@@ -2119,7 +2119,7 @@ bool Creature::CreateFromProto(ObjectGuid::LowType guidlow, uint32 entry, int32 
     CreatureTemplate const* cinfo = sObjectMgr->GetCreatureTemplate(entry);
     if (!cinfo)
     {
-        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature::CreateFromProto(): creature template (guidlow: %lu, entry: %u) does not exist.", guidlow, entry);
+        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature::CreateFromProto(): creature template (guidlow: %u, entry: %u) does not exist.", guidlow, entry);
         return false;
     }
 
@@ -2171,7 +2171,7 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType guid, Map* map, bool addTo
     CreatureData const* data = sObjectMgr->GetCreatureData(guid);
     if (!data)
     {
-        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature (GUID: %lu) not found in table `creature`, can't load. ", guid);
+        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature (GUID: %u) not found in table `creature`, can't load. ", guid);
         return false;
     }
 
@@ -2728,7 +2728,7 @@ void Creature::ForcedDespawn(uint32 timeMSToDespawn /*= 0*/, Seconds const& forc
 
 void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/, Seconds const& forceRespawnTimer /*= 0*/)
 {
-    if (m_despawn || !IsInWorld())
+    if (!this || m_despawn || !IsInWorld())
         return;
 
     if (TempSummon* summon = this->ToTempSummon())
@@ -2883,7 +2883,7 @@ SpellInfo const* Creature::reachWithSpellCure(Unit* victim)
             if (spellInfo->EffectMask < uint32(1 << j))
                 break;
 
-            if (spellInfo->Effects[j]->Effect == SPELL_EFFECT_HEAL)
+            if ((spellInfo->Effects[j]->Effect == SPELL_EFFECT_HEAL))
             {
                 bcontinue = false;
                 break;

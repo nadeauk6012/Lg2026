@@ -3396,6 +3396,8 @@ bool Map::getObjectHitPos(std::set<uint32> const& phases, bool otherUsePlayerPha
 
 float Map::GetHeight(std::set<uint32> const& phases, float x, float y, float z, bool vmap /*= true*/, float maxSearchDist /*= DEFAULT_HEIGHT_SEARCH*/, DynamicTreeCallback* dCallback /*= nullptr*/) const
 {
+    if (!this)
+        return VMAP_INVALID_HEIGHT_VALUE;
     float vmapZ = GetHeight(x, y, z, vmap, maxSearchDist);
     float goZ = _dynamicTree.getHeight(x, y, z, maxSearchDist, phases, dCallback);
     if (vmapZ > goZ && dCallback)
@@ -4559,8 +4561,6 @@ bool Map::IsCanScale() const
         case DIFFICULTY_EVENT_SCENARIO_6:
         case DIFFICULTY_WORLD_PVP_SCENARIO_2:
             return true;
-        default:
-            break;
     }
 
     return false;
@@ -4616,11 +4616,8 @@ const WorldLocation* InstanceMap::GetClosestGraveYard(float x, float y, float z)
     WorldLocation const* location = nullptr;
 
     if (i_data) // For use in instance script
-    {
-        location = i_data->GetClosestGraveYard(x, y, z);
-        if (location)
+        if (location = i_data->GetClosestGraveYard(x, y, z))
             return location;
-    }
 
     float dist = 10000.0f;
     bool found = false;
@@ -5322,7 +5319,7 @@ void Map::UpdateLoop(volatile uint32 _mapID)
             m_Transports.clear();
             UnloadAll();
             b_isMapStop = true;
-            TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Crash _mapID %u thread %zu", _mapID, std::hash<std::thread::id>()(std::this_thread::get_id()));
+            TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Crash _mapID %u thread %u", _mapID, std::this_thread::get_id());
             break;
         }
 

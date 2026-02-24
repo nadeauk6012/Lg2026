@@ -260,7 +260,7 @@ void LoadDisables()
             {
                 if (!sMapStore.LookupEntry(entry))
                 {
-                    TC_LOG_INFO(LOG_FILTER_GENERAL,"Map entry %u from `disables` doesn't exist in dbc, skipped.", entry);
+                    TC_LOG_INFO(LOG_FILTER_GENERAL,"sql.sql", "Map entry %u from `disables` doesn't exist in dbc, skipped.", entry);
                     continue;
                 }
                 break;

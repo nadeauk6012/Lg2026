@@ -666,9 +666,9 @@ void BattlegroundDeepwindGorge::Cart::CartDelivered()
 
 void BattlegroundDeepwindGorge::Cart::UnbindCartFromPlayer()
 {
-    Player* player = ControlledBy();
+    Player* player = nullptr;
     Unit* cart = nullptr;
-    if (player)
+    if (player = ControlledBy())
         if (Aura* aura = player->GetAura(BG_DG_AURA_CARTS_CHAINS))
             if (Unit* unit = aura->GetCaster())
                 cart = unit;

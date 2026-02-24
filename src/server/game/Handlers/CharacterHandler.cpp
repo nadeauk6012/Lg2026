@@ -779,6 +779,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
     AddDelayedEvent(100, [=]() -> void
     {
+        if (!this)
+            return;
+
         auto player = GetPlayer();
         if (!player)
             return;
@@ -850,7 +853,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
                 else
                 {
                     // remove wrong guild data
-                    TC_LOG_ERROR(LOG_FILTER_GENERAL, "Player %s (GUID: %u) marked as member of not existing guild (id: %lu), removing guild membership for player.", player->GetName(), player->GetGUIDLow(), player->GetGuildId());
+                    TC_LOG_ERROR(LOG_FILTER_GENERAL, "Player %s (GUID: %u) marked as member of not existing guild (id: %u), removing guild membership for player.", player->GetName(), player->GetGUIDLow(), player->GetGuildId());
                     player->SetInGuild(0);
                 }
             }
@@ -1314,8 +1317,7 @@ void WorldSession::HandleCharCustomizeCallback(std::shared_ptr<WorldPackets::Cha
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHARACTER_NAME);
     stmt->setUInt64(0, lowGuid);
-    result = CharacterDatabase.Query(stmt);
-    if (result)
+    if (result = CharacterDatabase.Query(stmt))
         TC_LOG_INFO(LOG_FILTER_CHARACTER, "Account: %d (IP: %s), Character[%s] (guid:%u) Customized to: %s", GetAccountId(), GetRemoteAddress().c_str(), result->Fetch()[0].GetString().c_str(), lowGuid, customizeInfo->CharName.c_str());
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
@@ -1654,8 +1656,7 @@ void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRa
             // Reset guild
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_MEMBER);
             stmt->setUInt64(0, lowGuid);
-            result = CharacterDatabase.Query(stmt);
-            if (result)
+            if (result = CharacterDatabase.Query(stmt))
                 if (Guild* guild = sGuildMgr->GetGuildById((result->Fetch()[0]).GetUInt64()))
                     guild->DeleteMember(ObjectGuid::Create<HighGuid::Player>(lowGuid));
         }
@@ -1783,7 +1784,7 @@ void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRa
             uint32 knownTitles[ktcount];
             Tokenizer tokens(knownTitlesStr, ' ', ktcount);
 
-            TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d faction change titles process... tokens size %zu ktcount %u input %s", GetAccountId(), tokens.size(), ktcount, knownTitlesStr.c_str());
+            TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d faction change titles process... tokens size %u ktcount %u input %s", GetAccountId(), tokens.size(), ktcount, knownTitlesStr.c_str());
 
             if (tokens.size() != ktcount)
                 return;
@@ -1888,7 +1889,7 @@ void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRa
     CharacterDatabase.CommitTransaction(trans);
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d faction change commit transaction success", GetAccountId());
 
-    TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d (IP: %s), Character guid: %lu Change Race/Faction to: %s", GetAccountId(), GetRemoteAddress().c_str(), lowGuid, info->Name.c_str());
+    TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d (IP: %s), Character guid: %u Change Race/Faction to: %s", GetAccountId(), GetRemoteAddress().c_str(), lowGuid, info->Name.c_str());
 
     SendCharFactionChange(RESPONSE_SUCCESS, info);
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "Account: %d faction change success end", GetAccountId());

@@ -266,11 +266,11 @@ namespace MMAP
         if (dtStatusFailed(query->init(mmap->navMesh, 1024)))
         {
             dtFreeNavMeshQuery(query);
-            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:loadMapInstanceImpl: Failed to initialize dtNavMeshQuery for mapId %04u instanceId %lu", mapId, instanceId);
+            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:loadMapInstanceImpl: Failed to initialize dtNavMeshQuery for mapId %04u instanceId %u", mapId, instanceId);
             return false;
         }
 
-        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:loadMapInstanceImpl: created dtNavMeshQuery for mapId %04u instanceId %lu", mapId, instanceId);
+        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:loadMapInstanceImpl: created dtNavMeshQuery for mapId %04u instanceId %u", mapId, instanceId);
         mmap->navMeshQueries.insert(std::pair<uint64, dtNavMeshQuery*>(instanceId, query));
         return true;
     }
@@ -387,7 +387,7 @@ namespace MMAP
         RecursiveGuard guard(mmap->navMeshQueries_lock);
         if (mmap->navMeshQueries.find(instanceId) == mmap->navMeshQueries.end())
         {
-            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:unloadMapInstance: Asked to unload not loaded dtNavMeshQuery mapId %04u instanceId %lu", mapId, instanceId);
+            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:unloadMapInstance: Asked to unload not loaded dtNavMeshQuery mapId %04u instanceId %u", mapId, instanceId);
             return false;
         }
 
@@ -395,7 +395,7 @@ namespace MMAP
 
         dtFreeNavMeshQuery(query);
         mmap->navMeshQueries.erase(instanceId);
-        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:unloadMapInstance: Unloaded mapId %04u instanceId %lu", mapId, instanceId);
+        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:unloadMapInstance: Unloaded mapId %04u instanceId %u", mapId, instanceId);
 
         return true;
     }
@@ -425,11 +425,11 @@ namespace MMAP
         if (dtStatusFailed(query->init(mmap->navMesh, 1024)))
         {
             dtFreeNavMeshQuery(query);
-            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetNavMeshQuery: Failed to initialize dtNavMeshQuery for mapId %04u instanceId %lu", mapId, instanceId);
+            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetNavMeshQuery: Failed to initialize dtNavMeshQuery for mapId %04u instanceId %u", mapId, instanceId);
             return nullptr;
         }
 
-        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetNavMeshQuery: created dtNavMeshQuery for mapId %04u instanceId %lu", mapId, instanceId);
+        TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetNavMeshQuery: created dtNavMeshQuery for mapId %04u instanceId %u", mapId, instanceId);
 
         return (mmap->navMeshQueries.insert(std::pair<uint64, dtNavMeshQuery*>(instanceId, query)).first)->second;
     }
@@ -519,11 +519,11 @@ namespace MMAP
             if (dtStatusFailed(query->init(mmap->navMesh, 2048)))
             {
                 dtFreeNavMeshQuery(query);
-                TC_LOG_ERROR(LOG_FILTER_MMAPS, "MMAP:GetModelNavMeshQuery: Failed to initialize dtNavMeshQuery for displayid %03u instanceId %lu", displayId, instanceId);
+                TC_LOG_ERROR(LOG_FILTER_MMAPS, "MMAP:GetModelNavMeshQuery: Failed to initialize dtNavMeshQuery for displayid %03u instanceId %u", displayId, instanceId);
                 return NULL;
             }
 
-            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetModelNavMeshQuery: created dtNavMeshQuery for displayid %03u instanceId %lu", displayId, instanceId);
+            TC_LOG_DEBUG(LOG_FILTER_MMAPS, "MMAP:GetModelNavMeshQuery: created dtNavMeshQuery for displayid %03u instanceId %u", displayId, instanceId);
             mmap->navMeshQueries.insert(std::pair<uint64, dtNavMeshQuery*>(instanceId, query));
         }
 

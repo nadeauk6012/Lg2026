@@ -1793,11 +1793,9 @@ void LFGMgr::FinishDungeon(ObjectGuid gguid, const uint32 dungeonId)
             if (data.reward->bonusQuestId)
             {
                 if (CTARewardStore[guid] && player->GetGroup() && (player->GetGroup()->GetLfgRoles(guid) & ~PLAYER_ROLE_LEADER) == CTARewardStore[guid])
-                {
-                    quest = sQuestDataStore->GetQuestTemplate(data.reward->bonusQuestId);
-                    if (quest)
+                    if (quest = sQuestDataStore->GetQuestTemplate(data.reward->bonusQuestId))
                         player->RewardQuest(quest, 0, nullptr, false);
-                }
+
                 SetEligibleForCTAReward(guid, 0);
             }
 
@@ -2882,8 +2880,7 @@ bool LfgReward::RewardPlayer(Player* player, LFGDungeonData const* randomDungeon
     {
         done = true;
 
-        quest = sQuestDataStore->GetQuestTemplate(otherQuest);
-        if (quest)
+        if (quest = sQuestDataStore->GetQuestTemplate(otherQuest))
             player->AddDelayedEvent(100, [player, quest] () -> void { if (player) player->RewardQuest(quest, 0, nullptr, false); });
     }
 

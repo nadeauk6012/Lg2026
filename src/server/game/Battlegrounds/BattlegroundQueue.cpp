@@ -325,7 +325,8 @@ void BattlegroundQueue::RemovePlayer(ObjectGuid guid, bool decreaseInvitedCount)
 {
     AddDelayedEvent(10, [=]() -> void
     {
-        RemovePlayerQueue(guid, decreaseInvitedCount);
+        if (this)
+            RemovePlayerQueue(guid, decreaseInvitedCount);
     });
 }
 
@@ -336,7 +337,7 @@ void BattlegroundQueue::RemovePlayerQueue(ObjectGuid guid, bool decreaseInvitedC
     auto itr = _queuedPlayers.find(guid);
     if (itr == _queuedPlayers.end())
     {
-        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "BattlegroundQueue: couldn't find player to remove GUID: %lu", guid.GetCounter());
+        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "BattlegroundQueue: couldn't find player to remove GUID: %u", guid.GetCounter());
         return;
     }
 
@@ -364,7 +365,7 @@ void BattlegroundQueue::RemovePlayerQueue(ObjectGuid guid, bool decreaseInvitedC
 
     if (bracketID == -1)
     {
-        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "BattlegroundQueue: ERROR Cannot find groupinfo for player GUID: %lu", guid.GetCounter());
+        TC_LOG_ERROR(LOG_FILTER_BATTLEGROUND, "BattlegroundQueue: ERROR Cannot find groupinfo for player GUID: %u", guid.GetCounter());
         return;
     }
 
@@ -483,7 +484,7 @@ bool BattlegroundQueue::InviteGroupToBG(GroupQueueInfo* ginfo, Battleground* bg,
 
             uint32 queueSlot = player->GetBattlegroundQueueIndex(bgQueueTypeId);
 
-            TC_LOG_DEBUG(LOG_FILTER_BATTLEGROUND, "Battleground: invited player %s (%lu) to BG instance %u queueindex %u bgtype %u, I can't help it if they don't press the enter battle button.", player->GetName(), player->GetGUID().GetCounter(), bg->GetInstanceID(), queueSlot, bg->GetTypeID());
+            TC_LOG_DEBUG(LOG_FILTER_BATTLEGROUND, "Battleground: invited player %s (%u) to BG instance %u queueindex %u bgtype %u, I can't help it if they don't press the enter battle button.", player->GetName(), player->GetGUID().GetCounter(), bg->GetInstanceID(), queueSlot, bg->GetTypeID());
 
             WorldPackets::Battleground::BattlefieldStatusNeedConfirmation battlefieldStatus;
             sBattlegroundMgr->BuildBattlegroundStatusNeedConfirmation(&battlefieldStatus, bg, player, queueSlot, player->GetBattlegroundQueueJoinTime(bgQueueTypeId), bg->IsArena() ? ARENA_INVITE_ACCEPT_WAIT_TIME : BG_INVITE_ACCEPT_WAIT_TIME, ginfo->JoinType, bracketID);

@@ -270,7 +270,7 @@ bool Conversation::LoadConversationFromDB(ObjectGuid::LowType guid, Map* map, bo
     ConversationSpawnData const* data = sConversationDataStore->GetConversationData(guid);
     if (!data)
     {
-        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature (GUID: %lu) not found in table `creature`, can't load. ", guid);
+        TC_LOG_ERROR(LOG_FILTER_SQL, "Creature (GUID: %u) not found in table `creature`, can't load. ", guid);
         return false;
     }
 

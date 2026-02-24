@@ -402,7 +402,7 @@ m_achievementMgr(sf::safe_ptr<AchievementMgr<Player>>(this))
     m_clientCheckDelay = 15000;
     m_clientKickDelay = 0;
 
-    memset(_voidStorageItems, 0, sizeof(_voidStorageItems));
+    memset(_voidStorageItems, NULL, sizeof(_voidStorageItems));
 
     m_PetSlots.resize(PET_SLOT_LAST, 0);
     realmTransferid = 0;
@@ -2873,7 +2873,7 @@ void Player::ProcessDelayedOperations()
             uint8 teamID = battle->Teams[PETBATTLE_TEAM_1]->OwnerGuid == GetGUID() ? PETBATTLE_TEAM_1 : PETBATTLE_TEAM_2;
 
             PetBattleRequest request;
-            memcpy((void*)&request, (void*)&battle->PvPMatchMakingRequest, sizeof(PetBattleRequest)); //@TODO check that
+            memcpy(&request, &battle->PvPMatchMakingRequest, sizeof(PetBattleRequest)); //@TODO check that
 
             auto& matchMakingRequest = battle->PvPMatchMakingRequest;
 
@@ -5294,8 +5294,8 @@ bool Player::addSpell(uint32 spellId, bool active, bool learning, bool dependent
         // not ranked skills
         for (SkillLineAbilityMap::const_iterator _spell_idx = skill_bounds.first; _spell_idx != skill_bounds.second; ++_spell_idx)
         {
-            UpdateAchievementCriteria(CRITERIA_TYPE_LEARN_SKILL_LINE, _spell_idx->second->SkillLine, mSkillSpellCount[_spell_idx->second->SkillLine], 0, NULL, true);
-            UpdateAchievementCriteria(CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS, _spell_idx->second->SkillLine, mSkillSpellCount[_spell_idx->second->SkillLine], 0, NULL, true);
+            UpdateAchievementCriteria(CRITERIA_TYPE_LEARN_SKILL_LINE, _spell_idx->second->SkillLine, mSkillSpellCount[_spell_idx->second->SkillLine], 0, NULL, this);
+            UpdateAchievementCriteria(CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS, _spell_idx->second->SkillLine, mSkillSpellCount[_spell_idx->second->SkillLine], 0, NULL, this);
         }
         UpdateAchievementCriteria(CRITERIA_TYPE_LEARN_SPELL, spellId);
     }
@@ -5990,7 +5990,8 @@ void Player::TakeSpellCharge(SpellInfo const* spellInfo)
             {
                 AddDelayedEvent(_delay, [this]() -> void
                 {
-                    CastSpell(this, 243241, true);
+                    if (this)
+                        CastSpell(this, 243241, true);
                 });
             }*/
             break;
@@ -7751,8 +7752,6 @@ void Player::HandleBaseModValue(BaseModGroup modGroup, BaseModType modType, floa
             break;
         case PCT_MOD:
             ApplyPercentModFloatVar(m_auraBaseMod[modGroup][modType], amount, apply);
-            break;
-        default:
             break;
     }
 
@@ -10518,7 +10517,7 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     else
         AddDelayedEvent(100, [=]() -> void
         {
-            if (item)
+            if (this && item)
                 _ApplyOrRemoveItemEquipDependentAuras(item->GetGUID(), true);
         });
 
@@ -11820,7 +11819,7 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type, bool AoeLoot, uint8 p
                 }
                 loot->shipmentBuildingType = go->garrBuildingType;
 
-                // TC_LOG_DEBUG(LOG_FILTER_LOOT, "Player::SendLoot guid %u, personal %u pguid %u lguid %lu", guid, personal, personalLoot.GetGUIDLow(), loot->GetGUIDLow());
+                // TC_LOG_DEBUG(LOG_FILTER_LOOT, "Player::SendLoot guid %u, personal %u pguid %u lguid %u", guid, personal, personalLoot.GetGUIDLow(), loot->GetGUIDLow());
             }
 
             if (loot_type == LOOT_FISHING)
@@ -19667,7 +19666,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
         UpdateAchievementCriteria(CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE, quest_id, quest->QuestSortID, quest->QuestInfoID);
     UpdateAchievementCriteria(CRITERIA_TYPE_COMPLETE_QUEST_COUNT);
     UpdateAchievementCriteria(CRITERIA_TYPE_COMPLETE_QUEST, quest_id, quest->QuestInfoID);
-    UpdateAchievementCriteria(CRITERIA_TYPE_COMPLETE_QUESTS_COUNT, 1, 0, 0, NULL, true);
+    UpdateAchievementCriteria(CRITERIA_TYPE_COMPLETE_QUESTS_COUNT, 1, 0, 0, NULL, this);
 
     SetQuestCompletedBit(sDB2Manager.GetQuestUniqueBitFlag(quest_id), true);
 
@@ -20585,7 +20584,8 @@ void Player::ItemAddedQuestCheck(uint32 entry, uint32 count)
     
     AddDelayedEvent(100, [=]() -> void
     {
-		UpdateForQuestWorldObjects();
+        if (this)
+            UpdateForQuestWorldObjects();
     });
 }
 
@@ -20631,7 +20631,8 @@ void Player::ItemRemovedQuestCheck(uint32 entry, uint32 count)
    
     AddDelayedEvent(100, [=]() -> void
     {
-		UpdateForQuestWorldObjects();
+        if (this)
+            UpdateForQuestWorldObjects();
     });
 }
 
@@ -20652,8 +20653,7 @@ void Player::KilledMonsterCredit(uint32 entry, ObjectGuid guid /*= ObjectGuid::E
     Creature* killed = NULL;
     if (!guid.IsEmpty())
     {
-        killed = GetMap()->GetCreature(guid);
-        if (killed)
+        if (killed = GetMap()->GetCreature(guid))
         {
             if (killed->GetEntry())
                 real_entry = killed->GetEntry();
@@ -21908,7 +21908,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     if (!result)
     {
-        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (ID: %lu) not found in table `characters`, can't load. ", guid.GetCounter());
+        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %u) not found in table `characters`, can't load. ", guid.GetCounter());
         return false;
     }
 
@@ -21920,13 +21920,13 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     // player should be able to load/delete character only with correct account!
     if (dbAccountId != GetSession()->GetAccountId())
     {
-        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (ID: %lu) loading from wrong account (is: %u, should be: %u)", guid.GetCounter(), GetSession()->GetAccountId(), dbAccountId);
+        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %u) loading from wrong account (is: %u, should be: %u)", guid.GetCounter(), GetSession()->GetAccountId(), dbAccountId);
         return false;
     }
 
     if (holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADBANNED))
     {
-        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %lu) is banned, can't load.", guid.GetCounter());
+        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %u) is banned, can't load.", guid.GetCounter());
         return false;
     }
 
@@ -21954,7 +21954,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     uint8 Gender = fields[f_gender].GetUInt8();
     if (!IsValidGender(Gender))
     {
-        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %lu) has wrong gender (%hu), can't be loaded.", guid.GetCounter(), Gender);
+        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (GUID: %u) has wrong gender (%hu), can't be loaded.", guid.GetCounter(), Gender);
         return false;
     }
 
@@ -22124,7 +22124,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     else if (!mapEntry || !IsPositionValid())
     {
         RemoveAtLoginFlag(AT_LOGIN_UNLOCK, true);
-        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) have invalid coordinates (MapId: %u X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) have invalid coordinates (MapId: %u X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
         RelocateToHomebind();
     }
     // Player was saved in Arena or Bg
@@ -22164,7 +22164,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
             //if (mapId == MAPID_INVALID) -- code kept for reference
             if (int16(mapId) == int16(-1)) // Battleground Entry Point not found (???)
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) was in BG in database, but BG was not found, and entry point was invalid! Teleport to default race/class locations.", guid.GetCounter());
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) was in BG in database, but BG was not found, and entry point was invalid! Teleport to default race/class locations.", guid.GetCounter());
                 RelocateToHomebind();
             }
             else
@@ -22209,7 +22209,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         }
         else*/
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) have problems with transport guid (%lu). Teleport to bind location.", guid.GetCounter(), transLowGUID);
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) have problems with transport guid (%u). Teleport to bind location.", guid.GetCounter(), transLowGUID);
             RelocateToHomebind();
         }
     }
@@ -22298,7 +22298,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         AreaTriggerStruct const* at = sAreaTriggerDataStore->GetGoBackTrigger(mapId);
         if (at)
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) is teleported to gobacktrigger (Map: %u X: %f Y: %f Z: %f O: %f).", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) is teleported to gobacktrigger (Map: %u X: %f Y: %f Z: %f O: %f).", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
             Relocate(at->target_X, at->target_Y, at->target_Z, GetOrientation());
             mapId = at->target_mapId;
         }
@@ -22309,7 +22309,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
         }
         else
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) is teleported to home (Map: %u X: %f Y: %f Z: %f O: %f).", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) is teleported to home (Map: %u X: %f Y: %f Z: %f O: %f).", guid.GetCounter(), mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
             RelocateToHomebind();
         }
 
@@ -22319,11 +22319,11 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
             PlayerInfo const* info = sObjectMgr->GetPlayerInfo(getRace(), getClass());
             mapId = info->mapId;
             Relocate(info->positionX, info->positionY, info->positionZ, 0.0f);
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) have invalid coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.", guid.GetCounter(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) have invalid coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.", guid.GetCounter(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
             map = sMapMgr->CreateMap(mapId, this);
             if (!map)
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %lu) has invalid default map coordinates (X: %f Y: %f Z: %f O: %f). or instance couldn't be created", guid.GetCounter(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player (guidlow %d) has invalid default map coordinates (X: %f Y: %f Z: %f O: %f). or instance couldn't be created", guid.GetCounter(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
                 return false;
             }
         }
@@ -23160,7 +23160,7 @@ void Player::_LoadInventory(PreparedQueryResult result, PreparedQueryResult arti
                     }
                     else
                     {
-                        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has item (GUID: %u, entry: %u) which doesnt have a valid bag (Bag GUID: %lu, slot: %u). Possible cheat?", GetGUIDLow(), GetName(), item->GetGUIDLow(), item->GetEntry(), bGUID.GetCounter(), slot);
+                        TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has item (GUID: %u, entry: %u) which doesnt have a valid bag (Bag GUID: %u, slot: %u). Possible cheat?", GetGUIDLow(), GetName(), item->GetGUIDLow(), item->GetEntry(), bGUID.GetCounter(), slot);
                         item->DeleteFromInventoryDB(trans);
                         RemoveItemDurations(item);
                         RemoveTradeableItem(item);
@@ -23188,7 +23188,7 @@ void Player::_LoadInventory(PreparedQueryResult result, PreparedQueryResult arti
                 }
                 else
                 {
-                    TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has item (GUID: %u, entry: %u) which can't be loaded into inventory (Bag GUID: %lu, slot: %u) by reason %u. Item will be sent by mail.", GetGUIDLow(), GetName(), item->GetGUIDLow(), item->GetEntry(), bGUID.GetCounter(), slot, err);
+                    TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has item (GUID: %u, entry: %u) which can't be loaded into inventory (Bag GUID: %u, slot: %u) by reason %u. Item will be sent by mail.", GetGUIDLow(), GetName(), item->GetGUIDLow(), item->GetEntry(), bGUID.GetCounter(), slot, err);
                     item->DeleteFromInventoryDB(trans);
                     RemoveItemDurations(item);
                     RemoveTradeableItem(item);
@@ -23438,25 +23438,25 @@ void Player::_LoadVoidStorage(PreparedQueryResult result, PreparedQueryResult re
 
             if (itemId.IsEmpty())
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid id (item id: %lu, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid id (item id: %u, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
                 continue;
             }
 
             if (!sObjectMgr->GetItemTemplate(itemEntry))
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid entry (item id: %lu, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid entry (item id: %u, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
                 continue;
             }
 
             if (slot >= VOID_STORAGE_MAX_SLOT)
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid slot (item id: %lu, entry: %u, slot: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, slot);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid slot (item id: %u, entry: %u, slot: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, slot);
                 continue;
             }
 
             if (!sObjectMgr->GetPlayerByLowGUID(creatorGuid.GetCounter()))
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid creator guid, set to 0 (item id: %lu, entry: %u, creatorGuid: %lu).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, creatorGuid.GetCounter());
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid creator guid, set to 0 (item id: %u, entry: %u, creatorGuid: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, creatorGuid.GetCounter());
                 creatorGuid.Clear();
             }
 
@@ -23485,7 +23485,7 @@ void Player::_LoadVoidStorage(PreparedQueryResult result, PreparedQueryResult re
 
             if (!item->LoadFromDB(itemGuid, GetGUID(), fields, itemEntry, getLevel()))
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - itemId (%lu) doesn't exist !!!! - item guid: %lu, deleted from VoidStorage", itemId.GetCounter(), itemGuid);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - itemId (%u) doesn't exist !!!! - item guid: %u, deleted from VoidStorage", itemId.GetCounter(), itemGuid);
 
                 item->FSetState(ITEM_REMOVED);
 
@@ -23496,13 +23496,13 @@ void Player::_LoadVoidStorage(PreparedQueryResult result, PreparedQueryResult re
 
             if (itemId.IsEmpty())
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid id (item id: %lu, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid id (item id: %u, entry: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry);
                 continue;
             }
 
             if (slot >= VOID_STORAGE_MAX_SLOT)
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid slot (item id: %lu, entry: %u, slot: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, slot);
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadVoidStorage - Player (GUID: %u, name: %s) has an item with an invalid slot (item id: %u, entry: %u, slot: %u).", GetGUIDLow(), GetName(), itemId.GetCounter(), itemEntry, slot);
                 continue;
             }
 
@@ -23619,7 +23619,7 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
         }
         else
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has broken item (GUID: %lu, entry: %u) in inventory. Deleting item.",
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadInventory: player (GUID: %u, name: '%s') has broken item (GUID: %u, entry: %u) in inventory. Deleting item.",
                 GetGUIDLow(), GetName(), itemGuid, itemEntry);
             remove = true;
         }
@@ -23669,7 +23669,7 @@ void Player::_LoadMailedItems(Mail* mail)
 
         if (!proto)
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player %u has unknown item_template (ProtoType) in mailed items(GUID: %lu template: %u) in mail (%u), deleted.", GetGUIDLow(), itemGuid, itemTemplate, mail->messageID);
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player %u has unknown item_template (ProtoType) in mailed items(GUID: %u template: %u) in mail (%u), deleted.", GetGUIDLow(), itemGuid, itemTemplate, mail->messageID);
 
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_INVALID_MAIL_ITEM);
             stmt->setUInt64(0, itemGuid);
@@ -23709,7 +23709,7 @@ void Player::_LoadMailedItems(Mail* mail)
 
         if (!item->LoadFromDB(itemGuid, ObjectGuid::Create<HighGuid::Player>(fields[50].GetUInt64()), fields, itemTemplate, getLevel()))
         {
-            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadMailedItems - Item in mail (%u) doesn't exist !!!! - item guid: %lu, deleted from mail", mail->messageID, itemGuid);
+            TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player::_LoadMailedItems - Item in mail (%u) doesn't exist !!!! - item guid: %u, deleted from mail", mail->messageID, itemGuid);
 
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_MAIL_ITEM);
             stmt->setUInt64(0, itemGuid);
@@ -25729,7 +25729,7 @@ void Player::_SaveInventory(SQLTransaction& trans)
                 ObjectGuid::LowType bagTestGUID = UI64LIT(0);
                 if (Item* test2 = GetItemByPos(INVENTORY_SLOT_BAG_0, item->GetBagSlot()))
                     bagTestGUID = test2->GetGUIDLow();
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player(GUID: %lu Name: %s)::_SaveInventory - the bag(%u) and slot(%u) values for the item with guid %u (state %d) are incorrect, the player doesn't have an item at that position!", lowGuid, GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), (int32)item->GetState());
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player(GUID: %u Name: %s)::_SaveInventory - the bag(%u) and slot(%u) values for the item with guid %u (state %d) are incorrect, the player doesn't have an item at that position!", lowGuid, GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), (int32)item->GetState());
                 // according to the test that was just performed nothing should be in this slot, delete
                 stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_INVENTORY_BY_BAG_SLOT);
                 stmt->setUInt64(0, bagTestGUID);
@@ -25745,7 +25745,7 @@ void Player::_SaveInventory(SQLTransaction& trans)
             }
             else if (test != item)
             {
-                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player(GUID: %lu Name: %s)::_SaveInventory - the bag(%u) and slot(%u) values for the item with guid %u are incorrect, the item with guid %u is there instead!", lowGuid, GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), test->GetGUIDLow());
+                TC_LOG_ERROR(LOG_FILTER_PLAYER, "Player(GUID: %u Name: %s)::_SaveInventory - the bag(%u) and slot(%u) values for the item with guid %u are incorrect, the item with guid %u is there instead!", lowGuid, GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), test->GetGUIDLow());
                 // save all changes to the item...
                 if (item->GetState() != ITEM_NEW) // only for existing items, no dupes
                     item->SaveToDB(trans);
@@ -26286,7 +26286,7 @@ void Player::outDebugValues() const
     if (!sLog->ShouldLog(LOG_FILTER_UNITS, LOG_LEVEL_DEBUG))
         return;
 
-    TC_LOG_DEBUG(LOG_FILTER_UNITS, "HP is: \t\t\t%lu\t\tMP is: \t\t\t%u", GetMaxHealth(), GetMaxPower(POWER_MANA));
+    TC_LOG_DEBUG(LOG_FILTER_UNITS, "HP is: \t\t\t%u\t\tMP is: \t\t\t%u", GetMaxHealth(), GetMaxPower(POWER_MANA));
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "AGILITY is: \t\t%f\t\tSTRENGTH is: \t\t%f", GetStat(STAT_AGILITY), GetStat(STAT_STRENGTH));
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "INTELLECT is: \t\t%f\t\t", GetStat(STAT_INTELLECT));
     TC_LOG_DEBUG(LOG_FILTER_UNITS, "STAMINA is: \t\t%f", GetStat(STAT_STAMINA));
@@ -28904,6 +28904,7 @@ void Player::AddSpellAndCategoryCooldowns(SpellInfo const* spellInfo, uint32 ite
                     int32 delay = (cooldownTime - curTime) * IN_MILLISECONDS;
                     AddDelayedEvent(delay, [this]() -> void
                     {
+                        if (this)
                             CastSpell(this, 243241, true);
                     });
                 }*/
@@ -33282,8 +33283,6 @@ void Player::UpdateAchievementCriteria(CriteriaTypes type, uint32 miscValue1 /*=
                     m_killPoints += 4.0f;
                 break;
             }
-            default:
-                break;
         }
     }
 
@@ -36957,7 +36956,7 @@ void Player::AchieveCriteriaCredit(uint32 criteriaID)
 void Player::SendVersionMismatchWarinings()
 {
     char buff[2048];
-    sprintf(buff, "%s", GetSession()->GetTrinityString(LANG_CLIENT_VERSION_MISMATCH_MESSAGE));
+    sprintf(buff, GetSession()->GetTrinityString(LANG_CLIENT_VERSION_MISMATCH_MESSAGE));
     sWorld->SendServerMessage(SERVER_MSG_STRING, buff);
 
     GetSession()->SendNotification(LANG_CLIENT_VERSION_MISMATCH_MESSAGE_NOTIFY);
@@ -37175,8 +37174,7 @@ void Player::UnLockThirdSocketIfNeed(Item* item)
         if (bonusListID == bonusID)
             return;
 
-    unlock = sDB2Manager.GetArtifactUnlock(item->GetTemplate()->GetArtifactID());
-    if (unlock)
+    if (unlock = sDB2Manager.GetArtifactUnlock(item->GetTemplate()->GetArtifactID()))
         if (sConditionMgr->IsPlayerMeetingCondition(this, unlock->PlayerConditionID))
             item->AddBonuses(bonusID);
 }
