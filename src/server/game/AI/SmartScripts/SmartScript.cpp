@@ -2521,7 +2521,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
             {
                 Position pos;
-                pos = e.action.sumCreaturePV.summmonInNPCPosition ? me->GetPosition() : Position(e.target.x, e.target.y, e.target.z, e.target.o;
+                pos = e.action.sumCreaturePV.summmonInNPCPosition ? me->GetPosition() : Position(e.target.x, e.target.y, e.target.z, e.target.o);
                 if (Player* player = (*itr)->ToPlayer())
                 {
                     if (Creature* summon = player->SummonCreature(e.action.sumCreaturePV.creature, pos, static_cast<TempSummonType>(e.action.sumCreaturePV.type), e.action.sumCreaturePV.duration))
