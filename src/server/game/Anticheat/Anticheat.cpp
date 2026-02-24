@@ -111,7 +111,7 @@ void PlayerCheatsMgr::LoadFromDB()
     }
     while (result->NextRow());
 
-    TC_LOG_INFO(LOG_FILTER_GENERAL, ">> %u anticheat checks loaded", _sanctions.size());
+    TC_LOG_INFO(LOG_FILTER_GENERAL, ">> %lu anticheat checks loaded", _sanctions.size());
 }
 
 void PlayerCheatsMgr::LoadConfig()

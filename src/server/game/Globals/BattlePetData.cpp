@@ -89,7 +89,7 @@ void BattlePetDataStoreMgr::LoadBattlePetTemplate()
 
     } while (result->NextRow());
 
-    TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, ">> Loaded %u battlepet template in %u ms.", _battlePetTemplateStore.size(), GetMSTimeDiffToNow(oldMSTime));
+    TC_LOG_INFO(LOG_FILTER_SERVER_LOADING, ">> Loaded %zu battlepet template in %u ms.", _battlePetTemplateStore.size(), GetMSTimeDiffToNow(oldMSTime));
 }
 
 void BattlePetDataStoreMgr::LoadBattlePetNpcTeamMember()

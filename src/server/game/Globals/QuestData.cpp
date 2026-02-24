@@ -319,7 +319,7 @@ void QuestDataStoreMgr::LoadWorldQuestTemplates()
     std::set<uint32> const* itemListIDs = sDB2Manager.GetItemsByBonusTree(455); // For 137 item can be 367 and 455
     if (itemListIDs && !itemListIDs->empty())
     {
-        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update itemListIDs %u", itemListIDs->size());
+        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update itemListIDs %zu", itemListIDs->size());
 
         for (auto& itemID : *itemListIDs)
         {
@@ -335,7 +335,7 @@ void QuestDataStoreMgr::LoadWorldQuestTemplates()
     itemListIDs = sDB2Manager.GetItemsByBonusTree(463);
     if (itemListIDs && !itemListIDs->empty())
     {
-        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update itemListIDs for dungeon %u", itemListIDs->size());
+        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update itemListIDs for dungeon %zu", itemListIDs->size());
 
         for (auto& itemID : *itemListIDs)
         {
@@ -378,7 +378,7 @@ void QuestDataStoreMgr::LoadWorldQuestTemplates()
                 _worldQuestSet[vTest.quest->QuestInfoID][vTest.quest->IsEmissary() ? 0 : vTest.quest->QuestSortID].insert(&vTest);
             }
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update _worldQuestRelic %u _worldQuestItem %u", _worldQuestRelic.size(), _worldQuestItem.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update _worldQuestRelic %zu _worldQuestItem %zu", _worldQuestRelic.size(), _worldQuestItem.size());
     // for (uint8 i = 0; i < QUEST_INFO_MAX; ++i)
         // TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "LoadWorldQuestTemplates() >> Loaded world_quest_update Info %u _worldQuestUpdate %u _worldQuestSet %u", i, _worldQuestUpdate[i].size(), _worldQuestSet[i].size());
 }
@@ -748,7 +748,7 @@ void QuestDataStoreMgr::LoadQuests()
         {
             if (!(qinfo->AllowableRaces & RACEMASK_ALL_PLAYABLE))
             {
-                TC_LOG_ERROR(LOG_FILTER_SQL, "LoadQuests() >> Quest %u does not contain any playable races in `AllowableRaces` (%u), value set to 0 (all races).", qinfo->GetQuestId(), qinfo->AllowableRaces);
+                TC_LOG_ERROR(LOG_FILTER_SQL, "LoadQuests() >> Quest %u does not contain any playable races in `AllowableRaces` (%lu), value set to 0 (all races).", qinfo->GetQuestId(), qinfo->AllowableRaces);
                 qinfo->AllowableRaces = uint64(-1);
             }
         }
@@ -1768,7 +1768,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
         {
             WorldQuestTemplate const* wqTemplate = &(*iter);
 
-            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %u", wqTemplate->QuestInfoID, wqTemplate->Min, wqTemplate->Max, _worldQuestSet[wqTemplate->QuestInfoID].size());
+            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %zu", wqTemplate->QuestInfoID, wqTemplate->Min, wqTemplate->Max, _worldQuestSet[wqTemplate->QuestInfoID].size());
 
             if (_worldQuestSet[wqTemplate->QuestInfoID].empty() || (wqTemplate->Chance && !roll_chance_f(wqTemplate->Chance)))
                 continue;
@@ -1810,7 +1810,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
                 if (countMaxQuest <= 0 && wqTemplate->AllMax)
                     break;
 
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate QuestInfoID %u countQuest %i _wQS %u ZoneID %u countMaxQuest %u WorldLegionInvasionZoneID %u", wqTemplate->QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest, WorldLegionInvasionZoneID);
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate QuestInfoID %u countQuest %i _wQS %zu ZoneID %u countMaxQuest %u WorldLegionInvasionZoneID %u", wqTemplate->QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest, WorldLegionInvasionZoneID);
 
                 while (countQuest > 0 && !_wQS.empty())
                 {
@@ -1850,7 +1850,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
         {
             WorldQuestTemplate const* wqTemplate = &(*iter);
 
-            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %u PrimaryID %u",
+            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %zu PrimaryID %u",
             wqTemplate->QuestInfoID, wqTemplate->Min, wqTemplate->Max, _worldQuestSet[wqTemplate->QuestInfoID].size(), wqTemplate->PrimaryID);
 
             if (_worldQuestSet[wqTemplate->QuestInfoID].empty() || (wqTemplate->Chance && !roll_chance_f(wqTemplate->Chance)))
@@ -1859,7 +1859,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
             if (!wqTemplate->PrimaryID) // Activate only have primary QuestInfoID
                 continue;
 
-            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate _worldQuestSetPrimaryID %u", _worldQuestSet[wqTemplate->PrimaryID].size());
+            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate _worldQuestSetPrimaryID %zu", _worldQuestSet[wqTemplate->PrimaryID].size());
 
             if (_worldQuestSet[wqTemplate->PrimaryID].empty())
                 continue;
@@ -1872,7 +1872,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
             {
                 uint32 ZoneID = v.first;
                 std::set<WorldQuestUpdate const*> _wQS = v.second;
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate ZoneID %u _wQS size %u", ZoneID, _wQS.size());
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate ZoneID %u _wQS size %zu", ZoneID, _wQS.size());
 
                 if (_wQS.empty() || WorldLegionInvasionZoneID != ZoneID || (wqTemplate->ZoneID && wqTemplate->ZoneID != ZoneID))
                     continue;
@@ -1894,7 +1894,7 @@ void QuestDataStoreMgr::GenerateWorldQuestUpdate()
                 if (countMaxQuest <= 0 && wqTemplate->AllMax)
                     break;
 
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate QuestInfoID %u countQuest %i _wQS %u ZoneID %u countMaxQuest %u", wqTemplate->QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest);
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateWorldQuestUpdate QuestInfoID %u countQuest %i _wQS %zu ZoneID %u countMaxQuest %u", wqTemplate->QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest);
 
                 while (countQuest > 0 && !_wQS.empty())
                 {
@@ -1947,7 +1947,7 @@ void QuestDataStoreMgr::GenerateInvasionPointUpdate()
         {
             WorldQuestTemplate const* wqTemplate = &(*iter);
 
-            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %u", QuestInfoID, wqTemplate->Min, wqTemplate->Max, _worldQuestSet[QuestInfoID].size());
+            TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate wqTemplate QuestInfoID %u Min %u Max %u _worldQuestSet %zu", QuestInfoID, wqTemplate->Min, wqTemplate->Max, _worldQuestSet[QuestInfoID].size());
 
             if (_worldQuestSet[QuestInfoID].empty() || (wqTemplate->Chance && !roll_chance_f(wqTemplate->Chance)))
                 continue;
@@ -1958,7 +1958,7 @@ void QuestDataStoreMgr::GenerateInvasionPointUpdate()
             {
                 uint32 ZoneID = v.first;
                 std::set<WorldQuestUpdate const*> _wQS = v.second;
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate ZoneID %u _wQS size %u wqTemplate->ZoneID %u", ZoneID, _wQS.size(), wqTemplate->ZoneID);
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate ZoneID %u _wQS size %zu wqTemplate->ZoneID %u", ZoneID, _wQS.size(), wqTemplate->ZoneID);
 
                 if (_wQS.empty() || (wqTemplate->ZoneID && wqTemplate->ZoneID != ZoneID))
                     continue;
@@ -1980,7 +1980,7 @@ void QuestDataStoreMgr::GenerateInvasionPointUpdate()
                 if (countMaxQuest <= 0 && wqTemplate->AllMax)
                     break;
 
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate QuestInfoID %u countQuest %i _wQS %u ZoneID %u countMaxQuest %u", QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest);
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GenerateInvasionPointUpdate QuestInfoID %u countQuest %i _wQS %zu ZoneID %u countMaxQuest %u", QuestInfoID, countQuest, _wQS.size(), ZoneID, countMaxQuest);
 
                 while (countQuest > 0 && !_wQS.empty())
                 {
@@ -2187,7 +2187,7 @@ WorldQuestTypeReward QuestDataStoreMgr::GetWorldQuestReward(WorldQuestTemplate c
     else if (!qTemplate->ItemResourceList.empty() && qTemplate->ItemCAList.empty() && !qTemplate->HasArmor)
         rewardType = WORLD_QUEST_TYPE_REWARD_RESOURCE;
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GetWorldQuestReward >> rewardType %u HasArmor %u ItemResourceList %u ItemCAList %u", rewardType, qTemplate->HasArmor, qTemplate->ItemResourceList.size(), qTemplate->ItemCAList.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "GetWorldQuestReward >> rewardType %u HasArmor %u ItemResourceList %zu ItemCAList %zu", rewardType, qTemplate->HasArmor, qTemplate->ItemResourceList.size(), qTemplate->ItemCAList.size());
 
     return rewardType;
 }
@@ -2201,7 +2201,7 @@ void QuestDataStoreMgr::CheckGemForClass(std::set<uint8>& classListH, std::set<u
     if (!gem)
         return;
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckGemForClass start classListH %u classListA %u gem->Type %u", classListH.size(), classListA.size(), gem->Type);
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckGemForClass start classListH %zu classListA %zu gem->Type %u", classListH.size(), classListA.size(), gem->Type);
 
     if (gem->Type & SOCKET_COLOR_RELIC_IRON)
     {
@@ -2314,7 +2314,7 @@ void QuestDataStoreMgr::CheckGemForClass(std::set<uint8>& classListH, std::set<u
         }
     }
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckGemForClass end classListH %u classListA %u", classListH.size(), classListA.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckGemForClass end classListH %zu classListA %zu", classListH.size(), classListA.size());
 }
 
 void QuestDataStoreMgr::CheckItemForClass(std::set<uint8>& classListH, std::set<uint8>& classListA, ItemTemplate const* proto, WorldQuest* Wq)
@@ -2571,7 +2571,7 @@ void QuestDataStoreMgr::CheckItemForClass(std::set<uint8>& classListH, std::set<
         }
     }
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForClass end classListH %u classListA %u", classListH.size(), classListA.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForClass end classListH %zu classListA %zu", classListH.size(), classListA.size());
 }
 
 void QuestDataStoreMgr::CheckItemForSpec(std::set<uint8>& classListH, std::set<uint8>& classListA, ItemTemplate const* proto, WorldQuest* Wq)
@@ -2579,7 +2579,7 @@ void QuestDataStoreMgr::CheckItemForSpec(std::set<uint8>& classListH, std::set<u
     if (!proto)
         return;
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForSpec >> start classListH size %u classListA size %u", classListH.size(), classListA.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForSpec >> start classListH size %zu classListA size %zu", classListH.size(), classListA.size());
 
     for (auto const specId : { SPEC_MAGE_ARCANE, SPEC_MAGE_FIRE, SPEC_MAGE_FROST, SPEC_PALADIN_HOLY, SPEC_PALADIN_PROTECTION, SPEC_PALADIN_RETRIBUTION, SPEC_WARRIOR_ARMS, SPEC_WARRIOR_FURY, SPEC_WARRIOR_PROTECTION, SPEC_DRUID_BALANCE, SPEC_DRUID_CAT, SPEC_DRUID_BEAR, SPEC_DRUID_RESTORATION, SPEC_DK_BLOOD, SPEC_DK_FROST, SPEC_DK_UNHOLY, SPEC_HUNTER_BEASTMASTER, SPEC_HUNTER_MARKSMAN, SPEC_HUNTER_SURVIVAL, SPEC_PRIEST_DISCIPLINE, SPEC_PRIEST_HOLY, SPEC_PRIEST_SHADOW, SPEC_ROGUE_ASSASSINATION, SPEC_ROGUE_COMBAT, SPEC_ROGUE_SUBTLETY, SPEC_SHAMAN_ELEMENTAL, SPEC_SHAMAN_ENHANCEMENT, SPEC_SHAMAN_RESTORATION, SPEC_WARLOCK_AFFLICTION, SPEC_WARLOCK_DEMONOLOGY, SPEC_WARLOCK_DESTRUCTION, SPEC_MONK_BREWMASTER, SPEC_MONK_WINDWALKER, SPEC_MONK_MISTWEAVER, SPEC_DEMON_HUNER_HAVOC, SPEC_DEMON_HUNER_VENGEANCE, SPEC_MAGE_ARCANE, SPEC_MAGE_FIRE, SPEC_MAGE_FROST, SPEC_PALADIN_HOLY, SPEC_PALADIN_PROTECTION, SPEC_PALADIN_RETRIBUTION, SPEC_WARRIOR_ARMS, SPEC_WARRIOR_FURY, SPEC_WARRIOR_PROTECTION, SPEC_DRUID_BALANCE, SPEC_DRUID_CAT, SPEC_DRUID_BEAR, SPEC_DRUID_RESTORATION, SPEC_DK_BLOOD, SPEC_DK_FROST, SPEC_DK_UNHOLY, SPEC_HUNTER_BEASTMASTER, SPEC_HUNTER_MARKSMAN, SPEC_HUNTER_SURVIVAL, SPEC_PRIEST_DISCIPLINE, SPEC_PRIEST_HOLY, SPEC_PRIEST_SHADOW, SPEC_ROGUE_ASSASSINATION, SPEC_ROGUE_COMBAT, SPEC_ROGUE_SUBTLETY, SPEC_SHAMAN_ELEMENTAL, SPEC_SHAMAN_ENHANCEMENT, SPEC_SHAMAN_RESTORATION, SPEC_WARLOCK_AFFLICTION, SPEC_WARLOCK_DEMONOLOGY, SPEC_WARLOCK_DESTRUCTION, SPEC_MONK_BREWMASTER, SPEC_MONK_WINDWALKER, SPEC_MONK_MISTWEAVER, SPEC_DEMON_HUNER_HAVOC, SPEC_DEMON_HUNER_VENGEANCE })
     {
@@ -2761,7 +2761,7 @@ void QuestDataStoreMgr::CheckItemForSpec(std::set<uint8>& classListH, std::set<u
         }
     }
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForSpec >> end classListH size %u classListA size %u", classListH.size(), classListA.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "CheckItemForSpec >> end classListH size %zu classListA size %zu", classListH.size(), classListA.size());
 }
 
 bool QuestDataStoreMgr::CheckItemForHorde(ItemTemplate const* proto)
@@ -2785,11 +2785,11 @@ void QuestDataStoreMgr::SaveWorldQuest()
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
     PreparedStatement* stmt = nullptr;
 
-    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "SaveWorldQuest() _worldQuest size %u", _worldQuest.size());
+    TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "SaveWorldQuest() _worldQuest size %zu", _worldQuest.size());
 
     for (auto& v : _worldQuest)
     {
-        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "SaveWorldQuest() QuestSortID %u size %u", v.first, v.second.size());
+        TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "SaveWorldQuest() QuestSortID %u size %zu", v.first, v.second.size());
 
         for (auto& vs : v.second)
         {
@@ -2870,7 +2870,7 @@ void QuestDataStoreMgr::ResetWorldQuest()
                     sWorldStateMgr.SetWorldState(itrState->first, 0, 0);
 
                 RemoveWorldQuestTask(worldQuest->quest);
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "ResetWorldQuest() >> QuestID %u ResetTime %u time(nullptr) %u", worldQuest->QuestID, worldQuest->ResetTime, time(nullptr));
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "ResetWorldQuest() >> QuestID %u ResetTime %u time(nullptr) %ld", worldQuest->QuestID, worldQuest->ResetTime, time(nullptr));
                 itr->second.erase(iter++);
                 continue;
             }
@@ -3030,7 +3030,7 @@ void QuestDataStoreMgr::ResetWorldQuest(uint32 QuestID)
                     sWorldStateMgr.SetWorldState(itrState->first, 0, 0);
 
                 RemoveWorldQuestTask(worldQuest->quest);
-                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "ResetWorldQuest() >> QuestID %u ResetTime %u time(nullptr) %u", worldQuest->QuestID, worldQuest->ResetTime, time(nullptr));
+                TC_LOG_DEBUG(LOG_FILTER_WORLD_QUEST, "ResetWorldQuest() >> QuestID %u ResetTime %u time(nullptr) %ld", worldQuest->QuestID, worldQuest->ResetTime, time(nullptr));
                 itr->second.erase(iter++);
                 continue;
             }
