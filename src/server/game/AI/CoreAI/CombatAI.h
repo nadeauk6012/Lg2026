@@ -132,7 +132,7 @@ struct VehicleAI : public CreatureAI
         explicit VehicleAI(Creature* c);
 
         void UpdateAI(uint32 diff) override;
-        static int Permissible(const Creature*) override;
+        static int Permissible(const Creature*);
         void Reset() override;
         void MoveInLineOfSight(Unit*) override {}
         void AttackStart(Unit*) override {}
