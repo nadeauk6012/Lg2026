@@ -19564,7 +19564,6 @@ bool Unit::SpellProcTriggered(Unit* victim, DamageInfo* dmgInfoProc, AuraEffect*
                 target = summon;
             }
 
-
             Unit* _caster = this;
             Unit* _targetAura = this;
             Unit* _targetAura2 = this;
