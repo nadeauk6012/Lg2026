@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QuestPackets_h__
-#define QuestPackets_h__
+#ifndef QUESTPACKETS_H
+#define QUESTPACKETS_H
 
 #include "Packet.h"
 #include "QuestDef.h"
@@ -349,6 +349,16 @@ namespace WorldPackets
             ObjectGuid QuestGiverGUID;
             int32 QuestID = 0;
             bool FromScript = false;
+        };
+
+        class QuestGiverCloseQuest final : public ClientPacket
+        {
+        public:
+            QuestGiverCloseQuest(WorldPacket&& packet) : ClientPacket(CMSG_QUEST_GIVER_CLOSE_QUEST, std::move(packet)) { }
+
+            void Read() override;
+
+            int32 QuestID = 0;
         };
 
         struct QuestObjectiveSimple
