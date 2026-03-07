@@ -802,6 +802,13 @@ void Player::_SaveArchaeology(SQLTransaction& trans)
 
 	for (CompletedProjectList::iterator itr = _completedProjects.begin(); itr != _completedProjects.end(); ++itr)
 	{
+		if (!itr->entry)
+		{
+			TC_LOG_ERROR(LOG_FILTER_SPELLS_AURAS, "Archaeology: nullptr entry in _completedProjects for guid %u. Skipping save row.", GetGUIDLow());
+			_archaeologyChanged = true;
+			continue;
+		}
+
 		index = 0;
 		stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_PLAYER_ARCHAEOLOGY_FINDS);
 		stmt->setUInt64(index++, GetGUIDLow());
@@ -902,6 +909,9 @@ void Player::SendCompletedProjects()
 	WorldPackets::Misc::SetupResearchHistory packet;
 	for (auto const& itr : _completedProjects)
 	{
+		if (!itr.entry)
+			continue;
+
 		WorldPackets::Misc::ResearchHistory data;
 		data.ProjectID = itr.entry->ID;
 		data.FirstCompleted = itr.date;
