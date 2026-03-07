@@ -744,8 +744,14 @@ bool Player::SolveResearchProject(uint32 spellId, SpellCastTargets& targets)
 
 uint32 Player::AddCompletedProject(ResearchProjectEntry const* entry)
 {
+	if (!entry)
+	{
+		TC_LOG_ERROR(LOG_FILTER_SPELLS_AURAS, "Archaeology: AddCompletedProject called with nullptr entry for guid %u.", GetGUIDLow());
+		return 0;
+	}
+
 	for (CompletedProjectList::iterator itr = _completedProjects.begin(); itr != _completedProjects.end(); ++itr)
-		if (itr->entry->ID == entry->ID)
+		if (itr->entry && itr->entry->ID == entry->ID)
 			return ++itr->count;
 
 	_completedProjects.push_back(CompletedProject(entry));
@@ -755,7 +761,7 @@ uint32 Player::AddCompletedProject(ResearchProjectEntry const* entry)
 bool Player::IsCompletedProject(uint32 id, bool onlyRare)
 {
 	for (CompletedProjectList::const_iterator itr = _completedProjects.begin(); itr != _completedProjects.end(); ++itr)
-		if (id == itr->entry->ID && (!onlyRare || itr->entry->Rarity))
+		if (itr->entry && id == itr->entry->ID && (!onlyRare || itr->entry->Rarity))
 			return true;
 
 	return false;

@@ -4391,13 +4391,6 @@ void Spell::EffectLearnSkill(SpellEffIndex effIndex)
         learnSkillStep = skillStep;
 
     unitTarget->ToPlayer()->SetSkill(skillid, learnSkillStep, std::max<uint16>(skillval, 1), tiermaxval);
-
-    // Archaeology
-    if (skillid == SKILL_ARCHAEOLOGY && !skillval && sWorld->getBoolConfig(CONFIG_ARCHAEOLOGY_ENABLED))
-    {
-        unitTarget->ToPlayer()->GenerateResearchSites();
-        unitTarget->ToPlayer()->GenerateResearchProjects();
-    }
 }
 
 void Spell::EffectIncreaseSkill(SpellEffIndex effIndex)
