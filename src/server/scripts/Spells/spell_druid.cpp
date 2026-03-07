@@ -1771,6 +1771,8 @@ public:
 
         void CalculateAmount0(AuraEffect const* aurEff, float& amount, bool& /*canBeRecalculated*/)
         {
+            if (Unit* caster = GetCaster())
+            {
                 if (AuraEffect* aurSpell = caster->GetAuraEffect(197524, EFFECT_0)) // Astral Influence
                     amount += CalculatePct(aurSpell->GetAmount(), addPct);
             }
