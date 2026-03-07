@@ -677,32 +677,32 @@ void CharacterService::Level(Player* player)
 void CharacterService::Gold20k(Player* player)
 {
 	player->ModifyMoney(200000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 20.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 20.000 de oro..");
 }
 void CharacterService::Gold50k(Player* player)
 {
 	player->ModifyMoney(500000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 50.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 50.000 de oro..");
 }
 void CharacterService::Gold100k(Player* player)
 {
 	player->ModifyMoney(1000000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 100.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 100.000 de oro..");
 }
 void CharacterService::Gold250k(Player* player)
 {
 	player->ModifyMoney(2500000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 250.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 250.000 de oro..");
 }
 void CharacterService::Gold500k(Player* player)
 {
 	player->ModifyMoney(5000000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 500.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 500.000 de oro..");
 }
 void CharacterService::Gold1000k(Player* player)
 {
 	player->ModifyMoney(10000000000);
-	player->SendCustomMessage("|cffff8000  Se han agregado 1.000.000 de oro..");
+	//player->SendCustomMessage("|cffff8000  Se han agregado 1.000.000 de oro..");
 }
 void CharacterService::AppareanceArtifac(Player* player)
 {
