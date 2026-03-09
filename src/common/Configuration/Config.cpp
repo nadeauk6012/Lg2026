@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008-2026 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,22 +20,13 @@
 #include <mutex>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-#include <boost/property_tree/exceptions.hpp>
-
 #include "Config.h"
-#include "Log.h"
 
 namespace
 {
     boost::property_tree::ptree _config;
     std::string _filename;
     std::mutex _configLock;
-
-    // removes quotes from ini values: "foo" - foo
-    inline void StripQuotes(std::string& s)
-    {
-        s.erase(std::remove(s.begin(), s.end(), '"'), s.end());
-    }
 }
 
 namespace bpt = boost::property_tree;
@@ -82,108 +74,35 @@ bool ConfigMgr::Reload(std::string& error)
     return LoadInitial(_filename, error);
 }
 
-std::string ConfigMgr::GetStringDefault(std::string const& name, std::string const& def)
+std::string ConfigMgr::GetStringDefault(std::string const& name, const std::string& def)
 {
-    try
-    {
-        std::string value = _config.get<std::string>(bpt::ptree::path_type(name, '/'));
-        StripQuotes(value);
-        return value;
-    }
-    catch (bpt::ptree_bad_path const&)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Missing name %s in config file %s, add \"%s = %s\" to this file",
-            name.c_str(), _filename.c_str(), name.c_str(), def.c_str());
-        return def;
-    }
-    catch (bpt::ptree_bad_data const& e)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Invalid value for %s in config file %s (%s). Using default \"%s\"",
-            name.c_str(), _filename.c_str(), e.what(), def.c_str());
-        return def;
-    }
+    auto value = _config.get<std::string>(bpt::ptree::path_type(name, '/'), def);
+    value.erase(std::remove(value.begin(), value.end(), '"'), value.end());
+    return value;
 }
 
 bool ConfigMgr::GetBoolDefault(std::string const& name, bool def)
 {
     try
     {
-        std::string val = _config.get<std::string>(bpt::ptree::path_type(name, '/'));
-        StripQuotes(val);
-
-        if (val == "true" || val == "TRUE" || val == "yes" || val == "YES" || val == "1")
-            return true;
-
-        if (val == "false" || val == "FALSE" || val == "no" || val == "NO" || val == "0")
-            return false;
-
-        // Key exists but is not a valid boolean token
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Invalid boolean value for %s in config file %s (\"%s\"). Using default %d",
-            name.c_str(), _filename.c_str(), val.c_str(), def ? 1 : 0);
-        return def;
+        auto val = _config.get<std::string>(bpt::ptree::path_type(name, '/'));
+        val.erase(std::remove(val.begin(), val.end(), '"'), val.end());
+        return (val == "true" || val == "TRUE" || val == "yes" || val == "YES" || val == "1");
     }
-    catch (bpt::ptree_bad_path const&)
+    catch (std::exception const& /*ex*/)
     {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Missing name %s in config file %s, add \"%s = %d\" to this file",
-            name.c_str(), _filename.c_str(), name.c_str(), def ? 1 : 0);
-        return def;
-    }
-    catch (bpt::ptree_bad_data const& e)
-    {
-
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Invalid value for %s in config file %s (%s). Using default %d",
-            name.c_str(), _filename.c_str(), e.what(), def ? 1 : 0);
         return def;
     }
 }
 
 int ConfigMgr::GetIntDefault(std::string const& name, int def)
 {
-    try
-    {
-        return _config.get<int>(bpt::ptree::path_type(name, '/'));
-    }
-    catch (bpt::ptree_bad_path const&)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Missing name %s in config file %s, add \"%s = %d\" to this file",
-            name.c_str(), _filename.c_str(), name.c_str(), def);
-        return def;
-    }
-    catch (bpt::ptree_bad_data const& e)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Invalid value for %s in config file %s (%s). Using default %d",
-            name.c_str(), _filename.c_str(), e.what(), def);
-        return def;
-    }
+    return _config.get<int>(bpt::ptree::path_type(name, '/'), def);
 }
 
 float ConfigMgr::GetFloatDefault(std::string const& name, float def)
 {
-    try
-    {
-        return _config.get<float>(bpt::ptree::path_type(name, '/'));
-    }
-    catch (bpt::ptree_bad_path const&)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Missing name %s in config file %s, add \"%s = %f\" to this file",
-            name.c_str(), _filename.c_str(), name.c_str(), def);
-        return def;
-    }
-    catch (bpt::ptree_bad_data const& e)
-    {
-        TC_LOG_WARN(LOG_FILTER_SERVER_LOADING,
-            "Invalid value for %s in config file %s (%s). Using default %f",
-            name.c_str(), _filename.c_str(), e.what(), def);
-        return def;
-    }
+    return _config.get<float>(bpt::ptree::path_type(name, '/'), def);
 }
 
 std::string const& ConfigMgr::GetFilename()
@@ -197,7 +116,7 @@ std::vector<std::string> ConfigMgr::GetKeysByString(std::string const& name)
     std::lock_guard<std::mutex> lock(_configLock);
 
     std::vector<std::string> keys;
-    for (auto const& child : _config)
+    for (const auto& child : _config)
         if (child.first.compare(0, name.length(), name) == 0)
             keys.push_back(child.first);
 
