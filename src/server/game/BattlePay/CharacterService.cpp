@@ -7,7 +7,7 @@
 #include "ScriptMgr.h"
 #include <stdsoap2.h>
 #include "QuestData.h"
-//#include <BattlenetHandler.cpp>
+#include <BattlenetHandler.cpp>
 #include "SourceService.h"
 #include "GameTables.h"
 #include "Guild.h"
