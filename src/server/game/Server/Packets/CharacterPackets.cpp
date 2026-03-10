@@ -45,9 +45,9 @@ WorldPackets::Character::EnumCharactersResult::CharacterInfo::CharacterInfo(Fiel
     HairStyle = fields[f_hairstyle].GetUInt8();
     HairColor = fields[f_haircolor].GetUInt8();
     FacialHair = fields[f_facialhair].GetUInt8();
-    CustomDisplay[0]  = fields[f_tattoo].GetUInt8();
-    CustomDisplay[1]  = fields[f_horn].GetUInt8();
-    CustomDisplay[2]  = fields[f_blindfold].GetUInt8();
+    CustomDisplayy[0]  = fields[f_tattoo].GetUInt8();
+    CustomDisplayy[1]  = fields[f_horn].GetUInt8();
+    CustomDisplayy[2]  = fields[f_blindfold].GetUInt8();
     Sex = fields[f_sex].GetUInt8();
     Level = fields[f_level].GetUInt8();
     ZoneId = int32(fields[f_zone].GetUInt16());
@@ -147,7 +147,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Character::EnumCharacters
     data << uint8(charInfo.HairStyle);
     data << uint8(charInfo.HairColor);
     data << uint8(charInfo.FacialHair);
-    data.append(charInfo.CustomDisplay.data(), charInfo.CustomDisplay.size());
+    data.append(charInfo.CustomDisplayy.data(), charInfo.CustomDisplayy.size());
     data << uint8(charInfo.Level);
     data << int32(charInfo.ZoneId);
     data << int32(charInfo.MapId);
