@@ -110,7 +110,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
     }
 
     charEnum.IsDemonHunterCreationAllowed = GetAccountExpansion() >= EXPANSION_LEGION || canAlwaysCreateDemonHunter;
-    charEnum.IsAlliedRacesCreationAllowed = GetAccountExpansion() >= EXPANSION_BATTLE_FOR_AZEROTH;
+    charEnum.IsAlliedRacesCreationAllowed = GetAccountExpansion() >= EXPANSION_LEGION;
 
     for (auto const& requirement : sObjectMgr->GetRaceUnlockRequirements())
     {
