@@ -41,6 +41,7 @@
 #include "AreaTriggerData.h"
 #include "SocialMgr.h"
 #include "AccountMgr.h"
+#include <boost/regex.hpp>
 #include "BattlegroundPackets.h"
 #include "GitRevision.h"
 #include "ArtifactPackets.h"
@@ -71,7 +72,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
 
             TC_LOG_INFO(LOG_FILTER_NETWORKIO, "Loading char guid %s from account %u.", charInfo.Guid.ToString().c_str(), GetAccountId());
 
-            if (!Player::ValidateAppearance(charInfo.Race, charInfo.Class, charInfo.Sex, charInfo.HairStyle, charInfo.HairColor, charInfo.Face, charInfo.FacialHair, charInfo.Skin, charInfo.CustomDisplay))
+            if (!Player::ValidateAppearance(charInfo.Race, charInfo.Class, charInfo.Sex, charInfo.HairStyle, charInfo.HairColor, charInfo.Face, charInfo.FacialHair, charInfo.Skin, charInfo.CustomDisplayy))
             {
                 TC_LOG_ERROR(LOG_FILTER_CHARACTER, "Player %s has wrong Appearance values (Hair/Skin/Color), forcing re-customize", charInfo.Guid.ToString().c_str());
 
@@ -80,7 +81,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
 
                 if (charInfo.Flags2 != CHARACTER_FLAG_2_CUSTOMIZE)
                 {
-                    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+                    CharacterDatabaseStatements* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
                     stmt->setUInt16(0, uint16(AT_LOGIN_CUSTOMIZE));
                     stmt->setUInt64(1, charInfo.Guid.GetCounter());
                     CharacterDatabase.Execute(stmt);
