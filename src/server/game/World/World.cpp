@@ -4247,9 +4247,9 @@ void World::LoadCharacterNameData()
     do
     {
         Field* fields = result->Fetch();
-        AddCharacterInfo(ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64()), fields[6].GetUInt32() /*account*/, fields[1].GetString()
+        AddCharacterInfo(ObjectGuid::Create<HighGuid::Player>(fields[0].GetUInt64()), fields[6].GetUInt32() /*account*/, fields[1].GetString(),
             fields[3].GetUInt8() /*gender*/, fields[2].GetUInt8() /*race*/, fields[4].GetUInt8() /*class*/, fields[5].GetUInt8() /*level*/,
-            fields[7].GetUInt16() /*zoneId*/, fields[8].GetUInt32() /*rankId*/, ObjectGuid::Create<HighGuid::Guild>(fields[9].GetUInt32()) /*guildId*/, (fields[10].GetUInt32()) /*SpecId*/);
+            fields[7].GetUInt16() /*zoneId*/, fields[8].GetUInt32() /*rankId*/, ObjectGuid::Create<HighGuid::Guild>(fields[9].GetUInt32()) /*guildId*/, fields[10].GetUInt16() /*SpecId*/);
         ++count;
     } while (result->NextRow());
 
