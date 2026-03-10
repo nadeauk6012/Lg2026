@@ -81,7 +81,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
 
                 if (charInfo.Flags2 != CHARACTER_FLAG_2_CUSTOMIZE)
                 {
-                    CharacterDatabaseStatements* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+                    CharacterDatabaseStatements* stmt = CharacterDatabase.PreparedStatement*(CHAR_UPD_ADD_AT_LOGIN_FLAG);
                     stmt->setUInt16(0, uint16(AT_LOGIN_CUSTOMIZE));
                     stmt->setUInt64(1, charInfo.Guid.GetCounter());
                     CharacterDatabase.Execute(stmt);
