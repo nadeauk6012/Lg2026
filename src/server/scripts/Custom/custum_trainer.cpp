@@ -16,9 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include "ScriptMgr.h"
-//#include "ScriptedGossip.h"
 #include "PrecompiledHeaders/ScriptPCH.h"
+
 #define MSG_ERR_HONOR "Not enough honor points!"
 #define MSG_ERR_ARENA "Not enough arena points!"
 #define CONST_AP  

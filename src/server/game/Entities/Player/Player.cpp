@@ -19413,7 +19413,6 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     else
         moneyRew = int32(quest->GetRewMoneyMaxLevel() * (GetMap()->IsDungeon() && sWorld->getBoolConfig(CONFIG_DROP_DUNGEON_ONLY_X1) ? 1.0f: sWorld->getRate(RATE_DROP_MONEY)));
 
-
     // Give player extra money if GetRewMoney > 0 and get ReqMoney if negative
     if (GetQuestMoneyReward(quest))
         moneyRew += GetQuestMoneyReward(quest);
