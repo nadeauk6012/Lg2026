@@ -26,6 +26,7 @@
 #include <map>
 #include <vector>
 #include <unordered_set>
+#include <boost/asio.hpp>
 
 struct RealmBuildInfo
 {
