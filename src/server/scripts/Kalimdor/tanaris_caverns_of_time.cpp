@@ -364,7 +364,7 @@ struct npc_kalecgos_for_teracgosa : ScriptedAI
     }
 };
 
-void AddSC_event_tarecgosa()
+void AddSC_tanaris_caverns_of_time()
 {
     new npc_anachronos();
     new npc_hallegosa();

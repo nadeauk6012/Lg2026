@@ -44,7 +44,6 @@ void AddSC_Duel();
 void AddSC_custom_arena_1v1();
 void AddSC_npc_quest_giver();
 void AddSC_npc_PetBattleTrainer();
-void AddSC_event_tarecgosa();
 void Addsc_dalaran_invasion();
 void AddSC_solocraft();
 
@@ -291,6 +290,7 @@ void AddSC_orgrimmar();
 void AddSC_silithus();
 void AddSC_stonetalon_mountains();
 void AddSC_tanaris();
+void AddSC_tanaris_caverns_of_time();
 void AddSC_teldrassil();
 void AddSC_the_barrens();
 void AddSC_thousand_needles();
@@ -1605,6 +1605,7 @@ void AddKalimdorScripts()
     AddSC_silithus();
     AddSC_stonetalon_mountains();
     AddSC_tanaris();
+	AddSC_tanaris_caverns_of_time();
     AddSC_teldrassil();
     AddSC_the_barrens();
     AddSC_thousand_needles();
@@ -1931,7 +1932,6 @@ void AddCustomScripts()
     AddSC_custom_arena_1v1();
     AddSC_npc_quest_giver();
     AddSC_npc_PetBattleTrainer();
-    AddSC_event_tarecgosa();
     Addsc_dalaran_invasion();
     AddSC_solocraft();
 #endif
