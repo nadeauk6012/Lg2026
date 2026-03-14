@@ -41,7 +41,7 @@
 #   Available builds: 26124, 26365, 26654, 26822, 26899, 26972
 #            Default: 26124
 
-Game.Build.Version = 26124
+Game.Build.Version = 26365
 
 #
 #    Game.Patch
@@ -51,7 +51,7 @@ Game.Build.Version = 26124
 #                     2  - (All 7.2.* content available, content from 7.3+ is blocked)
 #                     1  - (All 7.1.* content available, content from 7.2+ is blocked)
 Game.Patch = 3
-
+Battlegroup = 1
 #
 ###################################################################################################
 
@@ -81,13 +81,22 @@ Game.Patch = 3
 RealmID = 1
 
 #
+#    RealmsStateUpdateDelay
+#        Description: Interval (in seconds) to refresh realm status information for clients and tools.
+#        Default:     10
+
+RealmsStateUpdateDelay = 10
+
+#MapSessionUpdateInterval = 10
+#WorldSessionExpireTime = 6000
+#
 #    DataDir
 #        Description: Data directory setting.
 #        Important:   DataDir needs to be quoted, as the string might contain space characters.
 #        Example:     "@prefix@/share/trinitycore"
 #        Default:     "."
 
-DataDir = ""
+DataDir = "."
 
 #
 #    LogsDir
@@ -96,7 +105,7 @@ DataDir = ""
 #                     Logs directory must exists, or log file creation will be disabled.
 #        Default:     "" - (Log files will be stored in the current path)
 
-LogsDir = ""
+LogsDir = "."
 
 #
 #    LoginDatabaseInfo
@@ -120,10 +129,10 @@ LogsDir = ""
 #    Don't open port on firewall to external connections (it belongs to mysql, not to wow server).
 #    The username you choose must have permisions to create/alter/rename tables.
 
-LoginDatabaseInfo     = "127.0.0.1;3306;trinity;trinity;auth"
-WorldDatabaseInfo     = "127.0.0.1;3306;trinity;trinity;world"
-CharacterDatabaseInfo = "127.0.0.1;3306;trinity;trinity;characters"
-HotfixDatabaseInfo    = "127.0.0.1;3306;trinity;trinity;hotfixes"
+LoginDatabaseInfo     = "127.0.0.1;3306;trinity;trinity;legion_auth"
+WorldDatabaseInfo     = "127.0.0.1;3306;trinity;trinity;legion_world"
+CharacterDatabaseInfo = "localhost;3306;trinity;trinity;legion_characters"
+HotfixDatabaseInfo    = "localhost;3306;trinity;trinity;legion_hotfixes"
 
 #
 #    LoginDatabase.WorkerThreads
@@ -237,27 +246,8 @@ CMakeCommand  = ""
 BuildDirectory  = ""
 
 #
-#    SourceDirectory
-#        Description: The path to your TrinityCore source directory.
-#                     If the path is left empty, the built-in CMAKE_SOURCE_DIR is used.
-#        Example:     "../TrinityCore"
-#        Default:     ""
-
-SourceDirectory  = ""
-
-#
-#    MySQLExecutable
-#        Description: The path to your mysql cli binary.
-#                     If the path is left empty, built-in path from cmake is used.
-#        Example:     "C:/Program Files/MySQL/MySQL Server 5.6/bin/mysql.exe"
-#                     "mysql.exe"
-#                     "/usr/bin/mysql"
-#        Default:     ""
-
-MySQLExecutable = ""
-
-#
 ###################################################################################################
+
 ###################################################################################################
 # NETWORK CONFIG
 #
@@ -265,7 +255,7 @@ MySQLExecutable = ""
 #        Description: Number of threads for network.
 #         Default:    1 - (Recommended 1 thread per 1000 connections)
 
-Network.Threads = 4
+Network.Threads = 1
 
 #
 #    Network.OutKBuff
@@ -339,21 +329,21 @@ Ra.MinLevel = 3
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-SOAP.Enabled = 0
+SOAP.Enabled = 1
 
 #
 #    SOAP.IP
 #        Description: Bind SOAP service to IP/hostname
 #        Default:     "127.0.0.1" - (Bind to localhost)
 
-SOAP.IP = "127.0.0.1"
+SOAP.IP = "0.0.0.0"
 
 #
 #    SOAP.Port
 #        Description: TCP port to reach the SOAP service.
 #        Default:     7878
 
-SOAP.Port = 7878
+SOAP.Port = 7898
 
 ###################################################################################################
 # PERFORMANCE SETTINGS
@@ -373,7 +363,7 @@ UseProcessors = 0
 #        Default:     0 - (Normal)
 #                     1 - (High)
 
-ProcessPriority = 1
+ProcessPriority = 0
 
 #
 #    Compression
@@ -382,7 +372,7 @@ ProcessPriority = 1
 #        Default:     1   - (Speed)
 #                     9   - (Best compression)
 
-Compression = 1
+Compression = 9
 
 #
 #    PlayerLimit
@@ -395,6 +385,14 @@ Compression = 1
 PlayerLimit = 0
 
 #
+#    LimitWhoOnline
+#        Description: Limit /who results to online players only.
+#        Default:     1 - (Enabled)
+#                     0 - (Disabled)
+
+LimitWhoOnline = 0
+
+#
 #    SaveRespawnTimeImmediately
 #        Description: Save respawn time for creatures at death and gameobjects at use/open.
 #        Default:     1 - (Enabled, Save respawn time immediately)
@@ -402,7 +400,10 @@ PlayerLimit = 0
 
 SaveRespawnTimeImmediately = 1
 
-#
+#Respawn Time
+RespawnTimeFromPlayer = 0
+RespawnTimeFromPlayerCount = 10
+
 #    MaxOverspeedPings
 #        Description: Maximum overspeed ping count before character is disconnected.
 #        Default:     2  - (Enabled, Minimum value)
@@ -468,7 +469,7 @@ GridCleanUpDelay = 300000
 #        Default:     100 - (0.1 second)
 
 MapUpdateInterval = 100
-
+#MapUpdate.Map.Threads = 1
 #
 #    ChangeWeatherInterval
 #        Description: Time (in milliseconds) for weather update interval.
@@ -569,7 +570,7 @@ DetectPosCollision = 1
 #                     0.5 - (Minimum, Contact Range, More sensitive reaction to target movement)
 #                     5.0 - (Maximum, Melee attack range, Less CPU usage)
 
-TargetPosRecalculateRange = 5.0
+TargetPosRecalculateRange = 1.5
 
 #
 #    UpdateUptimeInterval
@@ -626,7 +627,7 @@ AddonChannel = 1
 #        Description: Number of threads to update maps.
 #        Default:     1
 
-MapUpdate.Threads = 16
+MapUpdate.Threads = 1
 
 #
 #    CleanCharacterDB
@@ -664,6 +665,7 @@ SoloLFG = 4
 
 #
 ###################################################################################################
+
 ###################################################################################################
 # SERVER SETTINGS
 #
@@ -713,6 +715,30 @@ GameType = 0
 #                     29 - (CN9           - basic-Latin at create, any at login)
 
 RealmZone = 1
+
+#
+#    ServerTimeTZ
+#        Description: Server time zone name (IANA, e.g. Europe/Paris) used for scheduled tasks.
+#        Default:     Europe/Paris
+#
+#    GameTimeTZ
+#        Description: Game time zone name (IANA) used for in-game time calculations.
+#        Default:     Europe/Paris
+
+#
+#    Is.Test.Server
+#        Description: Mark this realm as a test server (core-specific).
+#        Default:     0
+
+Is.Test.Server = 0
+#ServerTimeTZ = America/New_York
+#GameTimeTZ   = America/New_York
+#
+#    World.MT.Session
+#        Description: Enable multi-threaded session handling (core-specific).
+#        Default:     0
+
+World.MT.Session = 0
 
 #
 #    StrictPlayerNames
@@ -786,7 +812,7 @@ DeclinedNames = 0
 #           Default:  6 - (Expansion 6 Legion)
 #                     5 - (Expansion 5 Warlords of Draenor)
 #                     4 - (Expansion 4 Mists of Pandaria)
-#		      3 - (Expansion 3 Cataclysm)
+#		              3 - (Expansion 3 Cataclysm)
 #                     2 - (Expansion 2 Warth of the Lich King)
 #                     1 - (Expansion 1 Burning Crusade)
 #                     0 - (Disabled, Ignore and disable expansion content (maps, races, classes)
@@ -900,6 +926,7 @@ CharacterCreating.Disabled.ClassMask = 0
 #        Default:     50
 
 CharactersPerAccount = 50
+
 #
 #    CharactersPerRealm
 #        Description: Limit number of characters per account on this realm.
@@ -909,30 +936,12 @@ CharactersPerAccount = 50
 CharactersPerRealm = 12
 
 #
-#    HeroicCharactersPerRealm
-#        Description: Limit number of heroic class characters per account on this realm.
-#        Range:       1-10
-#        Default:     1
-
-HeroicCharactersPerRealm = 1
-
-#
-#    CharacterCreating.MinLevelForHeroicCharacter
-#        Description: Limit creating heroic characters only for account with another
-#                     character of specific level (ignored for GM accounts)
-#        Default:     55 - (Enabled, Requires at least another level 55 character)
-#                     0  - (Disabled)
-#                     1  - (Enabled, Requires at least another level 1 character)
-
-CharacterCreating.MinLevelForHeroicCharacter = 55
-
-#
 #    DemonHuntersPerRealm
 #        Description: Limit number of demon hunter characters per account on this realm.
 #        Range:       1-12
 #        Default:     1
 
-DemonHuntersPerRealm = 1
+DemonHuntersPerRealm = 4
 
 #
 #    CharacterCreating.MinLevelForDemonHunter
@@ -942,7 +951,7 @@ DemonHuntersPerRealm = 1
 #                     0  - (Disabled)
 #                     1  - (Enabled, Requires at least another level 1 character)
 
-CharacterCreating.MinLevelForDemonHunter = 70
+CharacterCreating.MinLevelForDemonHunter = 0
 
 #
 #    SkipCinematics
@@ -952,7 +961,7 @@ CharacterCreating.MinLevelForDemonHunter = 70
 #                     1 - (Show intro only for first character of selected race)
 #                     2 - (Disable intro for all classes)
 
-SkipCinematics = 0
+SkipCinematics = 2
 
 #
 #    MaxPlayerLevel
@@ -1031,15 +1040,6 @@ MaxJusticePoints = 400000
 StartJusticePoints = 0
 
 #
-#    FastFishing
-#        Description: Makes fishing faster, or removes the wait entirely.
-#        Default:     0  - (Disabled)
-#                     1  - (Faster)
-#                     2  - (Instant)
-
-FastFishing = 0
-
-#
 #    MaxArenaPoints
 #        Description: Maximum arena points a character can have.
 #        Default:     10000
@@ -1079,7 +1079,7 @@ RecruitAFriend.MaxDifference = 4
 #                     3  - (Enabled, Admins)
 #                     4  - (Disabled)
 
-InstantLogout = 1
+InstantLogout = 0
 
 #
 #    DisableWaterBreath
@@ -1133,7 +1133,7 @@ CastUnstuck = 1
 #        Default: 10
 #
 
-MaxSpellCastsInChain = 10
+MaxSpellCastsInChain = 0
 
 #
 #    Instance.IgnoreLevel
@@ -1149,7 +1149,7 @@ Instance.IgnoreLevel = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-Instance.IgnoreRaid = 0
+Instance.IgnoreRaid = 1
 
 #
 #    Instance.ResetTimeHour
@@ -1168,6 +1168,10 @@ Instance.ResetTimeHour = 4
 #                               resets)
 
 Instance.UnloadDelay = 1800000
+
+#InstanceUpdateInterval =50
+#PvpMapUpdateInterval = 25
+#ObjectUpdateInterval = 200
 
 #
 #    Quests.LowLevelHideDiff
@@ -1255,6 +1259,8 @@ MinPetitionSigns = 4
 #        Default:     74
 
 MaxGroupXPDistance = 74
+#Group.BonusXp = 0
+
 
 #
 #    MaxRecruitAFriendBonusDistance
@@ -1269,7 +1275,7 @@ MaxRecruitAFriendBonusDistance = 100
 #        Description: Time (in seconds) mail delivery is delayed when sending items.
 #        Default:     3600 - (1 hour)
 
-MailDeliveryDelay = 3600
+MailDeliveryDelay = 0
 
 #
 #    SkillChance.Prospecting
@@ -1293,7 +1299,7 @@ SkillChance.Milling = 0
 #                     for equip slots.
 #        Default:     1 - (Recheck offhand slot weapon at unlearning a spell)
 #                     0 - (Recheck offhand slot weapon only at zone update)
-
+timezone = 5
 OffhandCheckAtSpellUnlearn = 1
 
 #
@@ -1318,7 +1324,7 @@ Event.Announce = 0
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-BeepAtStart = 1
+BeepAtStart = 0
 
 #
 #    Motd
@@ -1327,7 +1333,7 @@ BeepAtStart = 1
 #        Example:     "Welcome to John\'s Server@This server runs on Trinity Core."
 #        Default:     "Welcome to a Trinity Core server."
 
-Motd = "Bienvenido a Nordrassil."
+Motd = "Welcome on PTR-Advanced"
 
 #
 #    Server.LoginInfo
@@ -1336,6 +1342,13 @@ Motd = "Bienvenido a Nordrassil."
 #                     1 - (Enabled)
 
 Server.LoginInfo = 0
+
+#
+#    HotfixCacheVersion
+#        Description: Hotfix cache version to invalidate and rebuild cached hotfix data when changed.
+#        Default:     0
+
+HotfixCacheVersion = 0
 
 #
 #    Command.LookupMaxResults
@@ -1350,8 +1363,57 @@ Command.LookupMaxResults = 0
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-AllowTickets = 1
+AllowTickets = 0
 
+#
+#    Anti.Flood.on.LFG
+#    Anti.Flood.on.PM
+#    Anti.Flood.MessageCount
+#        Description: Anti-flood (spam) protection settings.
+#        Default:     0 - (Disabled) / 1 - (Enabled)
+#
+#    Anti.Flood.Hwid.Bans.Allow
+#    Anti.Flood.Hwid.Mute.Allow
+#    Anti.Flood.Hwid.Kick.Allow
+#    Anti.Flood.Hwid.Bans.Count.Required
+#        Description: HWID-based anti-flood actions.
+#        Default:     0
+
+Anti.Flood.on.LFG                  = 0
+Anti.Flood.on.PM                   = 0
+Anti.Flood.MessageCount            = 4
+Anti.Flood.Hwid.Bans.Allow         = 0
+Anti.Flood.Hwid.Mute.Allow         = 0
+Anti.Flood.Hwid.Kick.Allow         = 0
+Anti.Flood.Hwid.Bans.Count.Required= 0
+
+#
+#    Complaints.Required
+#        Description: Number of complaints required to trigger penalties.
+#        Default:     0
+#
+#    Complaints.Penalty1
+#    Complaints.Penalty2
+#    Complaints.Penalty3
+#        Description: Penalty (minutes mute if >0, ban if <0) for complaint thresholds.
+#        Default:     10 / 60 / 1440
+
+Complaints.Required = 0
+Complaints.Penalty1 = 10
+Complaints.Penalty2 = 60
+Complaints.Penalty3 = 1440
+
+#
+#    Share.Enable
+#        Description: Enable share feature (core-specific).
+#        Default:     0
+#
+#    Ipset.Enable
+#        Description: Enable ipset integration (core-specific).
+#        Default:     0
+
+Share.Enable = 0
+Ipset.Enable = 0
 #
 #     DungeonFinder.Enable
 #        Description: Dungeon and raid finder system.
@@ -1359,7 +1421,12 @@ AllowTickets = 1
 #                     0 - (Disabled)
 
 DungeonFinder.Enable = 1
-
+DungeonFinder.OptionsMask = 1
+#DungeonFinder.DebugJoin = 0
+#DungeonFinder.ForceMinplayers = 0
+#DungeonFinder.ShortageCheckInterval = 5
+#DungeonFinder.ShortagePercent = 50
+#DungeonFinder.MaxQueues = 7
 #
 #   DBC.EnforceItemAttributes
 #        Description: Disallow overriding item attributes stored in DBC files with values from the
@@ -1433,7 +1500,7 @@ DB2.Files.LoadAllLocales = 1
 #                     4  - (Enable world only)
 #                     0  - (All Disabled)
 
-Updates.EnableDatabases = 15
+Updates.EnableDatabases = 0
 
 #
 #    Updates.AutoSetup
@@ -1482,8 +1549,6 @@ Updates.CleanDeadRefMaxCount = 3
 #
 ###################################################################################################
 
-#
-###################################################################################################
 
 ###################################################################################################
 # HOTSWAP SETTINGS
@@ -1604,55 +1669,12 @@ Anticheat.MaxReportsBeforeBan = 200
 #     Default: 120 (2 minutes)
 
 Anticheat.BanCheckTimeRange = 120
-#
-###################################################################################################
-
-###################################################################################################
-# WARDEN SETTINGS
-#
-#    Warden.Enabled
-#        Description: Enable Warden anticheat system.
-#        Default:     0 - (Disabled)
-#                     1 - (Enabled)
-
-Warden.Enabled = 0
 
 #
-#    WardenExtended.Enabled
-#        Description: Enable extended anticheat system.
-#        Default:     0 - (Disabled)
-#                     1 - (Enabled)
-
-WardenExtended.Enabled = 0
-
-#
-#    Warden.BasicSecurityLevelReq
-#        Description:
-#        Default:     40
-
-Warden.BasicSecurityLevelReq = 40
-
-#
-#    Warden.MaxSecurityLevelReq
-#        Description:
-#        Default:     100
-
-Warden.MaxSecurityLevelReq = 100
-
-#
-#    Warden.ClientResponseDelay
-#        Description: Time (in milliseconds) before client is getting disconnecting for not responding.
-#        Default:     60000 - (1 Minute)
-
-Warden.ClientResponseDelay = 60000
-
-#
-#    Warden.ClientCheckHoldOff
-#        Description: Time (in milliseconds) to wait before sending the next check request to the client.
-#                     A low number increases traffic and load on client and server side.
-#        Default:     25000 - (25 Seconds)
-
-Warden.ClientCheckHoldOff = 25000
+#    ServerAnticheat.Mode
+#        Description: Anticheat operating mode (core-specific).
+#        Default:     0
+ServerAnticheat.Mode = 0
 
 #
 ###################################################################################################
@@ -1739,12 +1761,24 @@ AllowTwoSide.WhoList = 1
 AllowTwoSide.AddFriend = 1
 
 #
-#    AllowTwoSide.Trade
-#        Description: Allow trading between factions.
+#    AllowTwoSide.Interaction.Lfg
+#        Description: Allow cross-faction interaction in LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+#
+#    AllowTwoSide.Interaction.Lfr
+#        Description: Allow cross-faction interaction in LFR.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+#
+#    AllowTwoSide.trade
+#        Description: Allow cross-faction trading.
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-AllowTwoSide.Trade = 1
+AllowTwoSide.Interaction.Lfg = 1
+AllowTwoSide.Interaction.Lfr = 1
+AllowTwoSide.trade           = 1
 
 #
 #    TalentsInspecting
@@ -1960,7 +1994,7 @@ ListenRange.Yell = 300
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-ChatFakeMessagePreventing = 1
+ChatFakeMessagePreventing = 0
 
 #
 #    ChatStrictLinkChecking.Severity
@@ -1973,7 +2007,7 @@ ChatFakeMessagePreventing = 1
 #                         work correctly, please assure that you have extracted locale DBCs of
 #                         every language specific client playing on this server)
 
-ChatStrictLinkChecking.Severity = 1
+ChatStrictLinkChecking.Severity = 0
 
 #
 #    ChatStrictLinkChecking.Kick
@@ -2006,6 +2040,8 @@ ChatFlood.MessageDelay = 1
 
 ChatFlood.MuteTime = 10
 
+
+
 #
 #    Channel.RestrictedLfg
 #        Description: Restrict LookupForGroup channel to characters registered in the LFG tool.
@@ -2028,14 +2064,14 @@ Channel.SilentlyGMJoin = 0
 #        Description: Level requirement for characters to be able to write in chat channels.
 #        Default:     1
 
-ChatLevelReq.Channel = 2
+ChatLevelReq.Channel = 1
 
 #
 #    ChatLevelReq.Whisper
 #        Description: Level requirement for characters to be able to whisper other characters.
 #        Default:     1
 
-ChatLevelReq.Whisper = 2
+ChatLevelReq.Whisper = 1
 
 #
 #    ChatLevelReq.Say
@@ -2050,8 +2086,11 @@ ChatLevelReq.Say = 1
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-AllowPlayerCommands = 0
+AllowPlayerCommands = 1
 
+#PlayerCommand.Timer = 5000
+#PlayerCommand.AuraScan = 1
+#PlayerCommand.InvisibleStatus = 1800
 #
 #    PreserveCustomChannels
 #        Description: Store custom chat channel settings like password, automatic ownership handout
@@ -2071,7 +2110,7 @@ PreserveCustomChannels = 1
 #        Default:     14 - (Enabled, Clean channels that haven't been used for 14 days)
 #                     0  - (Disabled, Infinite channel storage)
 
-PreserveCustomChannelDuration = 7
+PreserveCustomChannelDuration = 0
 
 #
 ###################################################################################################
@@ -2084,7 +2123,7 @@ PreserveCustomChannelDuration = 7
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-WordFilter.Enable = 1
+WordFilter.Enable = 0
 
 #    WordFilter.MuteDuration
 #        Description: Mute chat for player.
@@ -2105,7 +2144,7 @@ WordFilter.MuteDuration = 10000
 #                     0 - (Disable)
 #                     1 - (Enable)
 
-GM.LoginState = 2
+GM.LoginState = 0
 
 #
 #    GM.Visible
@@ -2114,7 +2153,7 @@ GM.LoginState = 2
 #                     0 - (Invisible)
 #                     1 - (Visible)
 
-GM.Visible = 2
+GM.Visible = 1
 
 #
 #    GM.Chat
@@ -2123,7 +2162,7 @@ GM.Visible = 2
 #                     0 - (Disable)
 #                     1 - (Enable)
 
-GM.Chat = 2
+GM.Chat = 0
 
 #
 #    GM.WhisperingTo
@@ -2132,7 +2171,7 @@ GM.Chat = 2
 #                     0 - (Disable)
 #                     1 - (Enable)
 
-GM.WhisperingTo = 2
+GM.WhisperingTo = 1
 
 #
 #    GM.InGMList.Level
@@ -2160,7 +2199,7 @@ GM.InWhoList.Level = 3
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-GM.LogTrade = 1
+GM.LogTrade = 0
 
 #
 #    GM.StartLevel
@@ -2175,7 +2214,7 @@ GM.StartLevel = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-GM.AllowInvite = 0
+GM.AllowInvite = 1
 
 #
 #    GM.AllowFriend
@@ -2183,7 +2222,7 @@ GM.AllowInvite = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-GM.AllowFriend = 0
+GM.AllowFriend = 1
 
 #
 #    GM.LowerSecurity
@@ -2246,7 +2285,14 @@ Visibility.Distance.BGArenas = 120
 
 Visibility.RelocationLowerLimit = 20
 Visibility.AINotifyDelay  = 1000
-
+Visibility.RelocationLowerLimitC = 10.000000
+Relocation.UpdateUnderwateLimit = 20.000000
+Zone.UpdateDistanceRage = 5.000000
+Visibility.Distance.BG = 533.333313
+Visibility.Distance.Arenas = 533.333313
+Visibility.Notify.Period.OnContinents = 1000
+Visibility.Notify.Period.InInstances = 1000
+Visibility.Notify.Period.InBGArenas = 1000
 #
 ###################################################################################################
 
@@ -2320,7 +2366,7 @@ Rate.Drop.Item.Epic             = 1
 Rate.Drop.Item.Legendary        = 1
 Rate.Drop.Item.Artifact         = 1
 Rate.Drop.Item.Referenced       = 1
-Rate.Drop.Money                 = 1
+Rate.Drop.Money                 = 2
 
 #
 #    Rate.Drop.Item.ReferencedAmount
@@ -2345,11 +2391,50 @@ Rate.XP.Explore   = 1
 Rate.XP.Gathering = 1
 
 #
+#    Rate.Drop.Dungeon
+#        Description: Additional multiplier for dungeon loot drops.
+#        Default:     0
+#
+#    Rate.Drop.Currency
+#        Description: Multiplier for currency drops.
+#        Default:     1
+#
+#    Rate.Drop.Currency.Amount
+#        Description: Multiplier for the amount of currency awarded per drop.
+#        Default:     1
+#
+#    Rate.Drop.Zone.Loot
+#        Description: Multiplier for zone loot drops.
+#        Default:     1
+
+Rate.Drop.Dungeon         = 0
+Rate.Drop.Currency        = 1.000000
+Rate.Drop.Currency.Amount = 1.000000
+Rate.Drop.Zone.Loot       = 1.000000
+
+#
+#    Rate.Honor.QuestBg
+#        Description: Honor gain multiplier from battleground quests.
+#        Default:     1
+#
+#    Rate.Online
+#        Description: Online reward multiplier.
+#        Default:     1
+#
+#    Rate.Donate
+#        Description: Donation reward multiplier.
+#        Default:     1
+
+Rate.Honor.QuestBg = 1.000000
+Rate.Online        = 1.000000
+Rate.Donate        = 1.000000
+
+#
 #    Rate.RepairCost
 #        Description: Repair cost rate.
 #        Default:     1
 
-Rate.RepairCost = 1
+Rate.RepairCost = 0.5
 
 #
 #    Rate.Rest.InGame
@@ -2369,7 +2454,7 @@ Rate.Rest.Offline.InWilderness   = 1
 #        Description: Damage after fall rate.
 #        Default:     1
 
-Rate.Damage.Fall = 1
+Rate.Damage.Fall = 0.5
 
 #
 #    Rate.Auction.Time
@@ -2418,7 +2503,7 @@ Rate.Talent = 1
 #        Description: Reputation gain rate.
 #        Default:     1
 
-Rate.Reputation.Gain = 1
+Rate.Reputation.Gain = 2
 
 #
 #    Rate.Reputation.LowLevel.Kill
@@ -2550,7 +2635,7 @@ DurabilityLossChance.Block = 0.05
 #                     MaxPlayerLevel+1 - (Disabled)
 #                     -10              - (Enabled, Level 1+ characters have 10 minute duration)
 
-Death.SicknessLevel = 11
+Death.SicknessLevel = 115
 
 #
 #    Death.CorpseReclaimDelay.PvP
@@ -2593,7 +2678,7 @@ Die.Command.Mode = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-AutoBroadcast.On = 1
+AutoBroadcast.On = 0
 
 #
 #    AutoBroadcast.Center
@@ -2622,7 +2707,7 @@ AutoBroadcast.Timer = 900000
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-Battleground.CastDeserter = 1
+Battleground.CastDeserter = 0
 
 #
 #    Battleground.QueueAnnouncer.Enable
@@ -2657,7 +2742,7 @@ Battleground.InvitationType = 0
 #        Default:     300000 - (Enabled, 5 minutes)
 #                     0      - (Disabled, Not recommended)
 
-BattleGround.PrematureFinishTimer = 300000
+Battleground.PrematureFinishTimer = 300000
 
 #
 #    BattleGround.PremadeGroupWaitForMatch
@@ -2666,7 +2751,7 @@ BattleGround.PrematureFinishTimer = 300000
 #        Default:     1800000 - (Enabled, 30 minutes)
 #                     0       - (Disabled, Not recommended)
 
-BattleGround.PremadeGroupWaitForMatch = 1800000
+Battleground.PremadeGroupWaitForMatch = 1800000
 
 #
 #    Battleground.GiveXPForKills
@@ -2695,7 +2780,7 @@ Battleground.Random.ResetHour = 6
 #         Default:     0 - (Disabled)
 #                      1 - (Enabled, Experimental as of still being in development)
 
-Wintergrasp.Enable = 1
+Wintergrasp.Enable = 0
 
 #
 #     Wintergrasp.PlayerMax
@@ -2740,6 +2825,40 @@ Wintergrasp.NoBattleTimer = 150
 
 Wintergrasp.CrashRestartTimer = 10
 
+
+#
+#    Tol Barad.Enable
+#        Description: Enable Tol Barad feature.
+#        Default:     0
+#
+#    Tol Barad.PlayerMax
+#    Tol Barad.PlayerMin
+#    Tol Barad.PlayerMinLvl
+#        Description: Tol Barad participation limits.
+#        Default:     100 / 0 / 80
+#
+#    Tol Barad.BattleTimer
+#        Description: Time (in minutes) for Tol Barad battle to last.
+#        Default:     30
+#
+#    Tol Barad.NoBattleTimer
+#        Description: Time (in minutes) between Tol Barad battles.
+#        Default:     150
+
+Tol Barad.Enable      = 0
+Tol Barad.PlayerMax   = 100
+Tol Barad.PlayerMin   = 0
+Tol Barad.PlayerMinLvl= 80
+Tol Barad.BattleTimer = 30
+Tol Barad.NoBattleTimer = 150
+
+#
+#     TolBarad.CrashRestartTimer
+#         Description: Time (in minutes) to delay the restart of TolBarad if the world server
+#                      crashed during a running battle.
+#         Default:     10
+
+Tol Barad.CrashRestartTimer = 10
 #
 ###################################################################################################
 
@@ -2769,6 +2888,9 @@ Arena.RatingDiscardTimer = 600
 
 Arena.RatedUpdateTimer = 5000
 
+Countdown.Arena1v1 = 0
+Countdown.Arena2v2 = 0
+Countdown.Arena3v3 = 0
 #
 #    Arena.AutoDistributePoints
 #        Description: Automatically distribute arena points.
@@ -2792,7 +2914,8 @@ Arena.AutoDistributeInterval = 7
 #                     1 - (Enabled)
 
 Arena.QueueAnnouncer.Enable = 0
-
+Arena.QueueAnnouncer.PlayerOnly = 0
+Arena.SoloQ3v3 = 0
 #
 #    Arena.ArenaSeason.ID
 #        Description: Current arena season id shown in clients.
@@ -2849,6 +2972,7 @@ PVP.ItemLevelCap = 524
 
 #
 ###################################################################################################
+
 ###################################################################################################
 # CHARACTER DELETE OPTIONS
 #
@@ -2858,7 +2982,7 @@ PVP.ItemLevelCap = 524
 #                     1 - (Unlink the character from account and free up the name, Appears as
 #                         deleted ingame)
 
-CharDelete.Method = 1
+CharDelete.Method = 0
 
 #
 #    CharDelete.MinLevel
@@ -2991,7 +3115,7 @@ NoResetTalentsCost = 0
 #                     1 - (Enabled)
 
 Guild.AllowMultipleGuildMaster = 0
-
+Guild.NewsLogRecordsCount = 250
 #
 #     ShowKickInWorld
 #        Description: Determines whether a message is broadcasted to the entire server when a
@@ -3065,13 +3189,6 @@ PlayerDump.DisallowPaths = 1
 #        Default:     1
 
 PlayerDump.DisallowOverwrite = 1
-
-#
-#     ArtifactResearchTimer
-#        Description: Change Artifact Research Notes learning time.
-#        Default:     432000 sec.
-
-ArtifactResearchTimer = 432000
 
 #
 ###################################################################################################
@@ -3368,6 +3485,7 @@ Currency.ResetInterval = 7
 #
 
 Currency.ResetWeekDay = 3
+Currency.ResetDay = 2
 
 #
 #    Currency.ResetHour
@@ -3486,6 +3604,7 @@ SpellForbidden = 0
 
 DisableRestart = 0
 
+Server.Auto.RestartHour = 5
 #   DisableUpdateOnlineTable
 #        Description: Disable update online table on auth base
 #        Default:     0 - (Disabled, server restarted every day)
@@ -3500,8 +3619,31 @@ DisableUpdateOnlineTable = 1
 #                     0 (Disabled)
 
 Debug.LFG = 1
-###################################################################################################
 
+#
+#    MonsterSight
+#        Description: Sight distance (in yards) used for creature visibility checks.
+#        Default:     50
+#
+#    GuarderSight
+#        Description: Sight distance (in yards) used for guard visibility checks.
+#        Default:     50
+
+MonsterSight = 50.000000
+GuarderSight = 50.000000
+###################################################################################################
+#
+#    Debug.Int0
+#    Debug.Int1
+#    Debug.Float0
+#    Debug.Float1
+#        Description: Custom debug values (core-specific).
+#        Default:     0
+
+Debug.Int0   = 0
+Debug.Int1   = 0
+Debug.Float0 = 0.000000
+Debug.Float1 = 0.000000
 ###################################################################################################
 # IPC SETTINGS
 #
@@ -3518,7 +3660,7 @@ BnetServer.Address = 127.0.0.1
 #        Default:     1118
 #
 
-BnetServer.Port = 1118
+BnetServer.Port = 1119
 
 #
 ###################################################################################################
@@ -3553,7 +3695,12 @@ BlackMarket.UpdatePeriod = 24
 #
 #
 ###################################################################################################
-
+## Warden : 
+Warden.Enabled = 0
+Warden.ClientCheckHoldOff = 25000
+Warden.ClientResponseDelay = 60000
+Warden.BasicSecurityLevelReq = 40
+Warden.MaxSecurityLevelReq = 100
 ###################################################################################################
 # MOVEMENT ANTICHEAT
 #
@@ -3580,7 +3727,7 @@ AnticheatLogFile = "cheats.log"
 #
 
 Character.Template = 1
-
+FastFishing = 1
 #
 ###################################################################################################
 
@@ -3588,7 +3735,7 @@ Character.Template = 1
 # ALLOWS TWO LEGENDARIES REGARDLESS OF CLASSHALL PERK
 #
 
-FunOption = 1
+FunOption = 0
 
 #
 ###################################################################################################
@@ -3634,9 +3781,18 @@ Dungeon.WeightedMythicKeystone.Enabled = 0
 #   FelExplosives   = 13,
 #   Quaking         = 14,
 
-Challenge.Manual.Affix1 = 9
-Challenge.Manual.Affix2 = 10
-Challenge.Manual.Affix3 = 6
+Challenge.LevelLimit = 30
+Challenge.LevelMax = 20
+Challenge.LevelStep = 2
+Challenge.AddItem = 1533
+Challenge.AddItemType = 1
+Challenge.AddItemCount = 120
+Challenge.Key.Reset = 7
+Instance.WeeklyReset = 7
+Instance.DailyReset = 1
+#Challenge.Manual.Affix1 = 9
+#Challenge.Manual.Affix2 = 10
+#Challenge.Manual.Affix3 = 6
 
 #
 ###################################################################################################
@@ -3662,7 +3818,7 @@ Player.AFKTimeout = 0
 # Whether uncontrolled temporary pets will be controlled or not
 # Example: Dire beast attacking the players current target when switching. Enabled by default
 
-Player.ControlGuardianPets = 1
+Player.ControlGuardianPets = 0
 
 #
 ###################################################################################################
@@ -3686,7 +3842,7 @@ Player.UnlimitedLegionLegendaries = 1
 # is enabled or you have the garrison progress. If not it will make you be able to equip one
 # legendary item.
 
-Player.LegionLegendaryEquipCount = 0
+Player.LegionLegendaryEquipCount = 1
 
 #
 ###################################################################################################
@@ -3697,7 +3853,7 @@ Player.LegionLegendaryEquipCount = 0
 # Option to toggle pvp talents on all the time
 # Example: 1 for true or 0 for false
 
-Player.AllowPVPTalentsAllTheTime = 1
+Player.AllowPVPTalentsAllTheTime = 0
 
 #
 ###################################################################################################
@@ -4202,7 +4358,7 @@ AuctionHouseBot.Buyer.Recheck.Interval = 20
 #        Default:     0 (disabled)
 #                     1 (enabled)
 
-KilledByCreature.Announcer = 1
+KilledByCreature.Announcer = 0
 
 #
 #     PvPKill.Announcer
@@ -4211,7 +4367,7 @@ KilledByCreature.Announcer = 1
 #        Default:     0 (disabled)
 #                     1 (enabled)
 
-PvPKill.Announcer = 1
+PvPKill.Announcer = 0
 
 #
 #    Who-logged.console
@@ -4220,7 +4376,7 @@ PvPKill.Announcer = 1
 #                     1 (enabled)
 
 
-Auto.Say.Hello = 1
+#Auto.Say.Hello = 0
 
 #
 #     Bpay.Enabled
@@ -4233,26 +4389,73 @@ Bpay.Enabled = 1
 #
 ###################################################################################################
 ###################################################################################################
-# UNKNOWN SETTINGS #
+# Custom Settings core  #
 ####################
 #
 
 MaxPrestigeLevel = 50
 
+###################Solocraft Fonction ##############
+Solocraft.Enable = 0
+Solocraft.Announce = 0
+SoloCraft.Warrior = 100
+SoloCraft.Paladin = 100
+SoloCraft.Hunter = 100
+SoloCraft.Rogue = 100
+SoloCraft.Priest = 100
+SoloCraft.Death.Knight = 100
+SoloCraft.Shaman = 100
+SoloCraft.Mage = 100
+SoloCraft.Warlock = 100
+SoloCraft.Monk = 100
+SoloCraft.Druid = 100
+Solocraft.XP.Enabled = 0
+Solocraft.XP.Balancing.Enabled = 0
+SoloCraft.Debuff.Enable = 1
+SoloCraft.Spellpower.Mult = 2.500000
+SoloCraft.Stats.Mult = 50.000000
+Solocraft.Max.Level.Diff = 10
+Solocraft.Dungeon.Level = 90
+
+Solocraft.Dungeon = 5
+Solocraft.Heroic = 10
+Solocraft.Mythic = 15
+Solocraft.Raid10 = 10
+Solocraft.Raid25 = 25
+Solocraft.Raid30 = 30
+Solocraft.Raid40 = 40
+Solocraft.SiegeOfNiuzaoTempleH = 5.000000
+Solocraft.TempleOfTheJadeSerpentH = 5.000000
+Solocraft.StormstoutBreweryH = 5.000000
+Solocraft.ArgentTournamentRaidH10 = 10.000000
+Solocraft.ArgentTournamentRaidH25 = 25.000000
+
+Segvcatch.Enable = 0
+DumpHandler.Enable = 0
+MixedBGs = 0
+#### Duel Reset ####
+DuelReset.Cooldown.OnStart = 0
+DuelReset.Cooldown.OnFinish = 0
+DuelReset.Cooldown.In.Duel.Zone = 0
+DuelReset.Cooldown.In.Elwynn.and.Durotar = 0
+DuelReset.Cooldown.Max.Energy.OnStart = 0
+DuelReset.Cooldown.Reset.Energy.OnStart = 0
+
+
 SizeCellForPull = 8
 
-Max.ItemLevel = 985
+Max.ItemLevel = 1000
 
 Obliterum.LevelEnable = 0
 Obliterum.LevelStart = 0
 Obliterum.LevelMin = 850
 Obliterum.LevelMax = 900
 
-Item.LegendaryLimit = 160000
-Item.LegendaryLevel = 970
+Item.LegendaryLimit = 985
+Item.LegendaryLevel = 1000
 
-PvP.LevelEnable = 0
-PvP.ActiveSeason = 0
+PvP.LevelEnable = 1
+PvP.ActiveSeason = 1
 PvP.ActiveStep = 1
 
 ParagonEnable = 1
@@ -4271,13 +4474,13 @@ PvP.TemplateSecondaryStad = 6600
 # Custom stad for each specialization
 
 Pvp.EnableCustomStad = 0
-
+DeathMatch = 1
 ####################################################################################################
 ###PLAYTIMEREWARD###
 ####################
 #
 # PlayedTimeReward.Money is copper so 10000 copper is 1 gold. Interval 3600000 = 1hour
- PlayedTimeReward.Money
+#PlayedTimeReward.Money 10000
 # PlayedTimeReward.Item  Nordrassil Coin
 #
 # 505051 = Nordrassil Coin(1 monedas) 
@@ -4287,7 +4490,7 @@ Pvp.EnableCustomStad = 0
 # 505055 = Nordrassil Coin(5 monedas) 
 # 505056 = Nordrassil Coin(10 monedas)
 # 
-PlayedTimeReward.Interval = 300000
+PlayedTimeReward.Interval = 1800000
 PlayedTimeReward.Money    = 1
 PlayedTimeReward.Item     = 505056
 #
@@ -4383,7 +4586,196 @@ ChatLogs.Addon = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-ChatLogs.BattleGround = 0
+ChatLogs.Battleground = 0
 
 # Extended Logging system configuration moved to end of file (on purpose)
 ###################################################################################################
+#ClassHall.Order.Max.Active.Followers = 6
+
+ArenaLogFile2v2 = ""
+ArenaLogFile3v3 = ""
+SpammLogFile = ""
+diffLogFile = ""
+Warden.LogFile = ""
+MapInfo.LogFile = ""
+PveEncounters = 1
+freezeFile = ""
+ArenaSeasonLogFile = ""
+TryCatchLogFile = ""
+###################################################################################################
+#XP RATE CHANGER NPC#
+#####################
+# Server Rates are determined with Rate.XP.Kill above.
+#
+#    Rate.XP.Change.Min
+#    Sets the minimal XP multiplier a player can choose
+ 
+Rate.XP.Change.Min = 1
+ 
+#    Rate.XP.Change.Max
+#    Sets the Max XP multiplier a player can choose
+ 
+Rate.XP.Change.Max = 3
+ 
+#    Rate.XP.Change.Step
+#    Sets the multiplier Increments a player can choose
+ 
+Rate.XP.Change.Step = 1
+#
+#################################################################################################
+
+###################################################################################################
+# ARCHAEOLOGY SETTINGS 
+#
+#
+#   Archaeology.Enabled
+#      Description: Enables or disables the Archaeology system globally.
+#                   If disabled, archaeology data won't be saved/loaded and related features
+#                   (digsites, projects, etc.) will not function.
+#           Default: 1 (true)
+
+Archaeology.Enabled = 1
+
+#
+#   Archaeology.RareBaseChance
+#      Description: Base chance (in percent) to roll a rare research project.
+#                   This value is used as a starting chance and is combined with
+#                   Archaeology.RareMaxLevelChance scaled by the player's archaeology skill.
+#                   Effective rare chance is capped at 100%.
+#           Default: 10.0
+
+Archaeology.RareBaseChance = 10.0
+
+#
+#   Archaeology.RareMaxLevelChance
+#      Description: Additional chance (in percent) that scales with archaeology skill up to max skill.
+#                   Formula (as in code):
+#                     min( RareBaseChance + skill * RareMaxLevelChance / 600.0, 100.0 )
+#                   Example with defaults at skill 600:
+#                     10.0 + 600 * 10.0 / 600 = 20.0 (%)
+#           Default: 10.0
+#
+
+Archaeology.RareMaxLevelChance = 10.0
+
+#
+###################################################################################################
+
+#
+#    DisableDonateScript
+#        Description: Disable donation script (core-specific).
+#        Default:     0
+#
+#    DisableDonateLoading
+#        Description: Disable donation loading (core-specific).
+#        Default:     0
+#
+#    Donate.On.Tests
+#        Description: Enable donation features on test servers.
+#        Default:     0
+#
+#    Purchase.Shop.Enabled
+#        Description: Enable in-game purchase shop.
+#        Default:     0
+
+DisableDonateScript   = 0
+DisableDonateLoading  = 0
+Donate.On.Tests       = 0
+Purchase.Shop.Enabled = 1
+
+#
+#    MaxSkillValue
+#        Description: Maximum skill value cap.
+#        Default:     800
+#
+#    TransferGoldLimit
+#        Description: Maximum amount of gold allowed to be transferred at once.
+#        Default:     100000000
+#
+#    LogGoldFrom
+#        Description: Log gold transactions at or above this amount.
+#        Default:     100000000
+
+MaxSkillValue     = 800
+TransferGoldLimit = 100000000
+LogGoldFrom       = 100000000
+
+#
+#     LevelGoldReq.Mail
+#        Description: Level requirement for sending gold via mail.
+#        Default:     15
+
+LevelGoldReq.Mail = 1
+
+#
+#    Garrison.DisableUpgrade
+#        Description: Disable garrison upgrades.
+#        Default:     0
+#
+#    PetBattles
+#        Description: Enable pet battles system.
+#        Default:     1
+#
+#    RespawnTimeFromPlayer
+#        Description: Use custom respawn time scaling based on nearby players.
+#        Default:     0
+#
+#    RespawnTimeFromPlayerCount
+#        Description: Player count threshold for respawn scaling.
+#        Default:     10
+#
+#    Artifact.Research.Timer
+#        Description: Artifact research time (seconds).
+#        Default:     432000
+#
+#    Artifact.Knowledge.Cap
+#    Artifact.Knowledge.Start
+#        Description: Artifact knowledge limits.
+#        Default:     55 / 40
+#
+#    Cap.KillPoints
+#    Cap.KillCreaturePoints
+#        Description: Point caps for kill-based rewards.
+#        Default:     150
+
+Garrison.DisableUpgrade      = 0
+PetBattles                  = 1
+Artifact.Research.Timer      = 432000
+Artifact.Knowledge.Cap       = 55
+Artifact.Knowledge.Start     = 40
+Cap.KillPoints               = 150.000000
+Cap.KillCreaturePoints       = 150.000000
+
+#
+#    WorldQuest
+#        Description: Enable world quests system.
+#        Default:     1
+#
+#    WorldQuest.ResetTimeHour
+#        Description: Hour of day (0..23) for world quest reset.
+#        Default:     4
+#
+#    WorldQuest.HourlyReset
+#        Description: World quest hourly reset interval (hours).
+#        Default:     6
+#
+#    WorldQuest.DailyReset
+#        Description: Enable daily reset for world quests.
+#        Default:     1
+#
+#    WorldQuest.InvasionPoint
+#        Description: Enable invasion points.
+#        Default:     2
+#
+#    WorldQuest.ItemLevel.Min
+#    WorldQuest.ItemLevel.Max
+#        Description: Item level range used for world quest rewards.
+#        Default:     805 / 855
+
+WorldQuest = 1
+WorldQuest.HourlyReset = 6
+WorldQuest.ResetTimeHour = 4
+WorldQuest.DailyReset      = 1
+WorldQuest.InvasionPoint   = 2
+WorldQuest.ItemLevel.Min = 850
+WorldQuest.ItemLevel.Max = 985
