@@ -955,9 +955,10 @@ public:
 
     static bool HandleDieCommand(ChatHandler* handler, char const* /*args*/)
     {
+		Player* player = handler->GetSession()->GetPlayer();
         Unit* target = handler->getSelectedUnit();
 
-        if (!target || !handler->GetSession()->GetPlayer()->GetSelection())
+        if (!target || !player->GetSelection())
         {
             handler->SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
             handler->SetSentErrorMessage(true);
@@ -975,7 +976,7 @@ public:
             if (sWorld->getBoolConfig(CONFIG_DIE_COMMAND_MODE))
                 handler->GetSession()->GetPlayer()->Kill(target);
             else
-                handler->GetSession()->GetPlayer()->DealDamage(target, target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                player->DealDamage(target, target->GetHealth(player), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
 
         return true;
