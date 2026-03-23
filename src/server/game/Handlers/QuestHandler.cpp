@@ -345,7 +345,7 @@ void WorldSession::HandleQuestGiverChooseReward(WorldPackets::Quest::QuestGiverC
         ItemTemplate const* rewardProto = sObjectMgr->GetItemTemplate(packet.ItemChoiceID);
         if (!rewardProto)
         {
-            TC_LOG_ERROR("entities.player.cheat", "Error in CMSG_QUESTGIVER_CHOOSE_REWARD: player %s (%s) tried to get invalid reward item (Item Entry: %u) for quest %u (possible packet-hacking detected)", _player->GetName(), _player->GetGUID().ToString().c_str(), packet.ItemChoiceID, packet.QuestID);
+            TC_LOG_ERROR(LOG_FILTER_NETWORKIO, "Error in CMSG_QUESTGIVER_CHOOSE_REWARD: player %s (%s) tried to get invalid reward item (Item Entry: %u) for quest %u (possible packet-hacking detected)", _player->GetName(), _player->GetGUID().ToString().c_str(), packet.ItemChoiceID, packet.QuestID);
             return;
         }
 
