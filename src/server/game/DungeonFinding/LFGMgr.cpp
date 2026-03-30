@@ -1627,8 +1627,16 @@ void LFGMgr::SendUpdateStatus(ObjectGuid guid, LfgUpdateData const& updateData, 
 
     uint32 queueId = 0;
     LfgQueueData const* queueData = nullptr;
+
     if (!updateData.dungeons.empty())
-        queueId = GetQueueId(*updateData.dungeons.begin()&0xFFFFF);
+        queueId = GetQueueId(*updateData.dungeons.begin() & 0xFFFFF);
+    else
+    {
+        // Fallback: use the first active queue for this player.
+        auto it = PlayerDungeons.find(guid);
+        if (it != PlayerDungeons.end() && !it->second.empty())
+            queueId = *it->second.begin();
+    }
 
     WorldPackets::LFG::QueueStatusUpdate update;
     if (auto ticket = GetTicket(player->GetGUID(), queueId))
@@ -1645,7 +1653,10 @@ void LFGMgr::SendUpdateStatus(ObjectGuid guid, LfgUpdateData const& updateData, 
     update.LfgJoined = updateData.updateType != LFG_UPDATETYPE_REMOVED_FROM_QUEUE;
     update.Queued = queued;
 
-    std::transform(updateData.dungeons.begin(), updateData.dungeons.end(), std::back_inserter(update.Slots), [=](uint32 dungeonId)
+    // If the caller didn't provide dungeons, try to use stored selections for this queue.
+    LfgDungeonSet const& dungeonSetForSlots = !updateData.dungeons.empty() ? updateData.dungeons : GetSelectedDungeons(guid, queueId);
+
+    std::transform(dungeonSetForSlots.begin(), dungeonSetForSlots.end(), std::back_inserter(update.Slots), [=, this](uint32 dungeonId)
     {
         return GetLFGDungeonEntry(dungeonId);
     });
