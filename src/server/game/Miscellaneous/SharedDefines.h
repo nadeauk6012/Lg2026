@@ -472,6 +472,12 @@ enum ItemQualities
     MAX_ITEM_QUALITY
 };
 
+enum SpellVisualKitEmote
+{
+    SPELL_VISUAL_KIT_FOOD = 406,
+    SPELL_VISUAL_KIT_DRINK = 438
+};
+
 enum SpellCategory
 {
     SPELL_CATEGORY_FOOD             = 11,

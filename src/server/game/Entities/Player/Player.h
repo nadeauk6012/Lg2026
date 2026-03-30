@@ -3316,6 +3316,7 @@ class Player : public Unit, public GridObject<Player>
     protected:
         // Gamemaster whisper whitelist
         GuidList WhisperList;
+		uint32 m_foodEmoteTimerCount;
 
         int32 m_contestedPvPTimer;
         int32 m_pvpAuraCheckTimer;
