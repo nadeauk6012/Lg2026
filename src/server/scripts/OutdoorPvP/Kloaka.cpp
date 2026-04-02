@@ -9,6 +9,8 @@
 #include "ScriptedGossip.h"
 #include "SpellScript.h"
 #include "GameEventMgr.h"
+#include "OutdoorPvP.h"
+
 
 enum Spells
 {
@@ -41,8 +43,6 @@ public:
 
 	bool OnGossipHello(Player* player, Creature* creature)
 	{
-		player->KilledMonsterCredit(97359);
-
 		if (creature->isQuestGiver())
 			player->PrepareQuestMenu(creature->GetGUID());
 
@@ -153,47 +153,58 @@ public:
 };
 
 // 220260 220265 220266 220253 220021 220236
-class spell_kloaka_call_some_adds : public SpellScript
+class spell_kloaka_call_some_adds : public SpellScriptLoader
 {
-	PrepareSpellScript(spell_kloaka_call_some_adds);
+public:
+	spell_kloaka_call_some_adds() : SpellScriptLoader("spell_kloaka_call_some_adds") { }
 
-	void HandleAfterCast()
+	class spell_kloaka_call_some_adds_SpellScript : public SpellScript
 	{
-		uint32 eventid = 0;
-		switch (GetSpellInfo()->Id)
+		PrepareSpellScript(spell_kloaka_call_some_adds_SpellScript);
+
+		void HandleAfterCast()
 		{
-		case SCREECHER_WHISTLE:
-			eventid = 82;
-			break;
-		case IMP_BINDING_CONTRACT:
-			eventid = 83;
-			break;
-		case WIDOWSISTER_CONTRACT:
-			eventid = 84;
-			break;
-		case CROC_FLUSHER:
-			eventid = 85;
-			break;
-		case UNDERBELLY_BANQUET:
-			eventid = 200;
-			break;
-		case YOUNG_MUTANT_WARTURTLES:
-			eventid = 201;
-			break;
-		case FEL_CHUM:
-			eventid = 202;
-			break;
-		default:
-			break;
+			uint32 eventid = 0;
+			switch (GetSpellInfo()->Id)
+			{
+			case SCREECHER_WHISTLE:
+				eventid = 82;
+				break;
+			case IMP_BINDING_CONTRACT:
+				eventid = 83;
+				break;
+			case WIDOWSISTER_CONTRACT:
+				eventid = 84;
+				break;
+			case CROC_FLUSHER:
+				eventid = 85;
+				break;
+			case UNDERBELLY_BANQUET:
+				eventid = 200;
+				break;
+			case YOUNG_MUTANT_WARTURTLES:
+				eventid = 201;
+				break;
+			case FEL_CHUM:
+				eventid = 202;
+				break;
+			default:
+				break;
+			}
+
+			if (eventid)
+				sGameEventMgr->StartEvent(eventid, true);
 		}
 
-		if (eventid)
-			sGameEventMgr->StartEvent(eventid, true);
-	}
+		void Register() override
+		{
+			AfterCast += SpellCastFn(spell_kloaka_call_some_adds_SpellScript::HandleAfterCast);
+		}
+	};
 
-	void Register() override
+	SpellScript* GetSpellScript() const override
 	{
-		AfterCast += SpellCastFn(spell_kloaka_call_some_adds::HandleAfterCast);
+		return new spell_kloaka_call_some_adds_SpellScript();
 	}
 };
 
@@ -266,13 +277,56 @@ struct npc_underbelly_banquet : public ScriptedAI
 	}
 };
 
+// Zone 8392
+class OutdoorPVPDalaranUnderbelly : public OutdoorPvP
+{
+public:
+	OutdoorPVPDalaranUnderbelly()
+	{
+		m_TypeId = OUTDOOR_PVP_DALARAN_UNDERBELLY;
+	}
+
+    ~OutdoorPVPDalaranUnderbelly() = default;
+
+	bool SetupOutdoorPvP() override
+	{
+		RegisterZone(8392);
+		return true;
+	}
+
+	void HandlePlayerEnterZone(ObjectGuid guid, uint32 zone) override
+	{
+		if (Player * player = ObjectAccessor::GetObjectInMap(guid, m_map, (Player*)nullptr))
+			player->TeleportTo(1502, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TELE_TO_SEAMLESS);
+	}
+
+	void HandlePlayerLeaveZone(ObjectGuid guid, uint32 zone) override
+	{
+		if (Player * player = ObjectAccessor::GetObjectInMap(guid, m_map, (Player*)nullptr))
+			if (player->GetMapId() == 1502)
+				player->TeleportTo(1220, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TELE_TO_SEAMLESS);
+	}
+};
+
+class OutdoorPvP_DalaranUnderbelly : public OutdoorPvPScript
+{
+public:
+	OutdoorPvP_DalaranUnderbelly() : OutdoorPvPScript("outdoorpvp_dalaran_underbelly") {}
+
+    OutdoorPvP* GetOutdoorPvP() const override
+    {
+        return new OutdoorPVPDalaranUnderbelly();
+    }
+};
 void AddSC_Kloaka()
 {
 	new npc_kloaka_capitan();
 	RegisterCreatureAI(npc_underbelly_banquet);
 
-	RegisterSpellScript(spell_kloaka_call_some_adds);
+	new spell_kloaka_call_some_adds();
 
-	RegisterPlayerScript(Underbelly_pvp_kill);
-	RegisterPlayerScript(Underbelly_event_controller);
+	new Underbelly_pvp_kill();
+	new Underbelly_event_controller();
+
+	new OutdoorPvP_DalaranUnderbelly();
 };

@@ -4656,6 +4656,7 @@ public:
 		return new spell_gen_artificial_stamina_AuraScript();
 	}
 };
+
 static uint32 const _effects[] =
 {
 	ATTACK_POWER_FOR_ATTACKER,
