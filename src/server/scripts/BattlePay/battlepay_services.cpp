@@ -81,20 +81,7 @@ public:
 
     bool CanBuy(WorldSession* session, Battlepay::Product const& /*product*/, std::string& reason) override
     {
-        auto player = session->GetPlayer();
-        if (!player)
-        {
-            reason = sObjectMgr->GetTrinityString(Battlepay::String::NeedToBeInGame, session->GetSessionDbLocaleIndex());
-            return false;
-        }
-
-        if (t_Level <= player->getLevel())
-        {
-            reason = sObjectMgr->GetTrinityString(Battlepay::String::TooHighLevel, session->GetSessionDbLocaleIndex());
-            return false;
-        }
-
-        return true;
+        return true; // Service product: level check is done at delivery time, not at purchase
     }
 };
 

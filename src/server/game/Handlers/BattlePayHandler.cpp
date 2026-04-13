@@ -310,14 +310,6 @@ void WorldSession::HandleBattlePayAckFailedResponse(WorldPackets::BattlePay::Bat
 {
 }
 
-void WorldSession::HandleBattlePayQueryClassTrialResult(WorldPackets::BattlePay::BattlePayQueryClassTrialResult& /*packet*/)
-{
-}
-
-void WorldSession::HandleBattlePayTrialBoostCharacter(WorldPackets::BattlePay::BattlePayTrialBoostCharacter& /*packet*/)
-{
-}
-
 void WorldSession::HandleBattlePayPurchaseDetailsResponse(WorldPackets::BattlePay::BattlePayPurchaseDetailsResponse& packet)
 {
     WorldPackets::BattlePay::BattlePayPurchaseUnk response;

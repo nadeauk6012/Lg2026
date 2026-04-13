@@ -61,6 +61,7 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
     charEnum.DisabledClassesMask = sWorld->getIntConfig(CONFIG_CHARACTER_CREATING_DISABLED_CLASSMASK);
 
     _allowedCharsToLogin.clear();
+	_classTrialLockedChars.clear();
 
     if (result)
     {
@@ -90,8 +91,13 @@ void WorldSession::HandleCharEnum(PreparedQueryResult result, bool isDeleted)
             }
 
             // Do not allow locked characters to login
-            if (!(charInfo.Flags & (CHARACTER_FLAG_LOCKED_FOR_TRANSFER | CHARACTER_FLAG_LOCKED_BY_BILLING)))
+            if (!(charInfo.Flags & (CHARACTER_FLAG_LOCKED_FOR_TRANSFER | CHARACTER_FLAG_LOCKED_BY_BILLING))
+                && !(charInfo.Flags3 & CHARACTER_FLAG_3_LOCKED_BY_REVOKED_CHARACTER_UPGRADE)
+                && !(charInfo.Flags4 & CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST_LOCKED))
                 _allowedCharsToLogin.insert(charInfo.Guid.GetCounter());
+            else if ((charInfo.Flags3 & CHARACTER_FLAG_3_LOCKED_BY_REVOKED_CHARACTER_UPGRADE)
+                || (charInfo.Flags4 & CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST_LOCKED))
+                _classTrialLockedChars.insert(charInfo.Guid.GetCounter());
 
             if (!sWorld->GetCharacterInfo(charInfo.Guid))
                 sWorld->AddCharacterInfo(charInfo.Guid, GetAccountId(), charInfo.Name, charInfo.Sex, charInfo.Race, charInfo.Class, charInfo.Level, charInfo.ZoneId, 0 /*rankId*/, charInfo.GuildGuid, charInfo.SpecializationID);
@@ -596,8 +602,16 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPackets::Character::PlayerLogin&
 
     if (!CharCanLogin(playerLogin.Guid.GetCounter()))
     {
-        TC_LOG_ERROR(LOG_FILTER_NETWORKIO, "Account (%u) can't login with that character (%u).", GetAccountId(), playerLogin.Guid.GetGUIDLow());
-        KickPlayer();
+        if (_classTrialLockedChars.count(playerLogin.Guid.GetCounter()))
+        {
+            TC_LOG_DEBUG(LOG_FILTER_NETWORKIO, "Account (%u) tried to login locked class trial character (%u).", GetAccountId(), playerLogin.Guid.GetGUIDLow());
+            AbortLogin(WorldPackets::Character::LoginFailureReason::LockedByCharacterUpgrade);
+        }
+        else
+        {
+            TC_LOG_ERROR(LOG_FILTER_NETWORKIO, "Account (%u) can't login with that character (%u).", GetAccountId(), playerLogin.Guid.GetGUIDLow());
+            KickPlayer();
+        }
         return;
     }
 

@@ -195,14 +195,34 @@ void BattlepayManager::ProcessDelivery(Purchase* purchase)
 			break;
 	case CharacterBoost:
 	{
-		if (_session->HasAuthFlag(AT_AUTH_FLAG_90_LVL_UP)) //@send error?
+		if (!sWorld->getBoolConfig(CONFIG_CHARACTER_BOOST_ENABLED))
 			break;
 
-		SendBattlePayDistribution(purchase->ProductID, DistributionStatus::BATTLE_PAY_DIST_STATUS_AVAILABLE, 1);
+		// Determine target level from ScriptName
+		uint8 targetLevel = 0;
+		if (product.ScriptName.find("level90") != std::string::npos)       targetLevel = 90;
+		else if (product.ScriptName.find("level100") != std::string::npos) targetLevel = 100;
 
-		if (player)
-			sCharacterService->Boost(player);
-		break;
+		if (!targetLevel)
+			break;
+
+		if (!player)
+		{
+			// Charselect: boost directly via DB
+			auto charInfo = sWorld->GetCharacterInfo(purchase->TargetCharacter);
+			if (!charInfo || charInfo->Level >= targetLevel)
+				break;
+
+			sCharacterService->BoostCharacter(_session, purchase->TargetCharacter, targetLevel);
+		}
+		else
+		{
+			// In-game: persist boost flag in login DB — boost icon will appear at charselect
+			_session->AddAuthFlag(AT_AUTH_FLAG_90_LVL_UP);
+			purchase->Status = DistributionStatus::BATTLE_PAY_DIST_STATUS_AVAILABLE;
+			SendBattlePayDistribution(purchase->ProductID, purchase->Status, purchase->DistributionId, purchase->TargetCharacter);
+		}
+		return; // Skip script call — CharacterBoost is fully handled here
 	}
 		//case Category:
 		//    break;
@@ -699,6 +719,16 @@ void BattlepayManager::SendProductList()
 		pProduct.UnkInt5 = 0;
 		pProduct.UnkString = "";
 		pProduct.UnkBit = false;
+
+		// Set boostType for Character Boost products (client reads UnkBits as sharedData.boostType)
+		// CharacterServiceInfo DB2: BoostType=1 (Level 90/WoD), BoostType=2 (Level 100+/Legion)
+		if (product.WebsiteType == Battlepay::WebsiteType::CharacterBoost)
+		{
+			if (product.ScriptName.find("level90") != std::string::npos)
+				pProduct.UnkBits = 1;
+			else
+				pProduct.UnkBits = 2; // Level 100/110 → Legion boost type
+		}
 
 		for (auto& item : product.Items)
 		{

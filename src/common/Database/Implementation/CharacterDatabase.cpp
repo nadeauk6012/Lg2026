@@ -878,4 +878,7 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_SEL_KILL_CREATURE, "SELECT entry, count, point FROM character_stat_kill_creature WHERE guid = ?",  CONNECTION_ASYNC);
     PrepareStatement(CHAR_INS_KILL_CREATURE, "REPLACE INTO character_stat_kill_creature (`guid`, `entry`, `count`, `point`) VALUES (?, ?, ?, ?)",  CONNECTION_ASYNC);
     PrepareStatement(CHAR_UPD_KILL_CREATURE, "UPDATE character_stat_kill_creature SET count = ?, point = ? WHERE guid = ? AND entry = ?", CONNECTION_ASYNC);
+
+    // Class Trail
+    PrepareStatement(CHAR_UPD_SPECIALIZATION, "UPDATE characters SET specialization = ? WHERE guid = ?", CONNECTION_ASYNC);
 }

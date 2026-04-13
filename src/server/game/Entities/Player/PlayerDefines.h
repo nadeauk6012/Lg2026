@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PlayerDefines_h__
-#define PlayerDefines_h__
+#ifndef PLAYERDEFINES_H
+#define PLAYERDEFINES_H
 
 #include "Define.h"
 
@@ -72,6 +72,13 @@ enum CharacterFlags3 : uint32
 {
     CHARACTER_FLAG_3_LOCKED_BY_REVOKED_VAS_TRANSACTION      = 0x00100000,
     CHARACTER_FLAG_3_LOCKED_BY_REVOKED_CHARACTER_UPGRADE    = 0x80000000,
+};
+
+enum CharacterRestrictionFlags : uint32
+{
+    CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST = 0x00000080,
+    CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST_LOCKED = 0x00040000,
+    CHARACTER_RESTRICTION_FLAG_EXPANSION_TRIAL = 0x00080000,
 };
 
 enum PlayerFlags

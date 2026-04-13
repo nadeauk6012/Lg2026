@@ -666,6 +666,16 @@ void WorldSession::LogoutPlayer(bool Save)
         else if (Pet* _pet = _player->GetPet())
             _pet->SavePetToDB();
 
+        // Lock class trial characters on logout
+        if (_player->HasAtLoginFlag(AT_LOGIN_CLASS_TRIAL))
+        {
+            _player->SetAtLoginFlag(AT_LOGIN_CLASS_TRIAL_LOCKED);
+            auto stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+            stmt->setUInt16(0, AT_LOGIN_CLASS_TRIAL_LOCKED);
+            stmt->setUInt64(1, _player->GetGUID().GetCounter());
+            CharacterDatabase.Execute(stmt);
+        }
+
         ///- empty buyback items and save the player in the database
         // some save parts only correctly work in case player present in map/player_lists (pets, etc)
         if (Save)

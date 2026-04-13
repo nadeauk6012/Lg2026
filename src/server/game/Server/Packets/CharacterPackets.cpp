@@ -91,7 +91,19 @@ WorldPackets::Character::EnumCharactersResult::CharacterInfo::CharacterInfo(Fiel
         Flags2 = CHARACTER_FLAG_2_RACE;
 
     Flags3 = 0;
-    Flags4 = 0;
+    if (atLoginFlags & AT_LOGIN_CLASS_TRIAL_LOCKED)
+        Flags3 |= CHARACTER_FLAG_3_LOCKED_BY_REVOKED_CHARACTER_UPGRADE;
+
+    Flags4 = 0; // RestrictionFlags — client reads this for padlock display
+    unkWod61x = 0; // CantLoginReason
+    if (atLoginFlags & AT_LOGIN_CLASS_TRIAL)
+        Flags4 |= CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST;
+    if (atLoginFlags & AT_LOGIN_CLASS_TRIAL_LOCKED)
+    {
+        Flags4 |= CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST | CHARACTER_RESTRICTION_FLAG_TRIAL_BOOST_LOCKED;
+        unkWod61x = 10; // CantLoginReason::LockedByCharacterUpgrade
+    }
+
     FirstLogin = (atLoginFlags & AT_LOGIN_FIRST) != 0;
 
     // show pet at selection character in character list only for non-ghost character

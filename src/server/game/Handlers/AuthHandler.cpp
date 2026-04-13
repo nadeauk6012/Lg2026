@@ -128,7 +128,7 @@ void WorldSession::SendFeatureSystemStatusGlueScreen()
     features.Unk14 = true;
     features.WillKickFromWorld = false;
     features.KioskModeEnabled = false;
-    features.TrialBoostEnabled = false;
+    features.TrialBoostEnabled = sWorld->getBoolConfig(CONFIG_CLASS_TRIAL_ENABLED);
     features.IsExpansionPreorderInStore = false;
     features.CompetitiveModeEnabled = false;
     features.TokenBalanceEnabled = true;

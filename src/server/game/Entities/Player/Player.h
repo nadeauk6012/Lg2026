@@ -619,6 +619,8 @@ enum AtLoginFlags : uint16
     AT_LOGIN_CHANGE_RACE            = 0x080,
     AT_LOGIN_UNLOCK                 = 0x100,
     AT_LOGIN_LOCKED_FOR_TRANSFER    = 0x200,
+	AT_LOGIN_CLASS_TRIAL            = 0x400,
+    AT_LOGIN_CLASS_TRIAL_LOCKED     = 0x800,
 };
 
 typedef std::vector<QuestStatusData*>* QuestStatusVector;
