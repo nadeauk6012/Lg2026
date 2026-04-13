@@ -337,6 +337,16 @@ namespace WorldPackets
 			ObjectGuid CharacterGUID;
 		};
 
+		class UpgradeComplete final : public ServerPacket
+		{
+		public:
+			UpgradeComplete() : ServerPacket(SMSG_CHARACTER_UPGRADE_COMPLETE, 16) {}
+
+			WorldPacket const* Write() override;
+
+			ObjectGuid CharacterGUID;
+		};
+
 		class DistributionAssignToTarget final : public ClientPacket
 		{
 		public:

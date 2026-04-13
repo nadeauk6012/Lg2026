@@ -349,6 +349,13 @@ WorldPacket const* WorldPackets::BattlePay::UpgradeStarted::Write()
 	return &_worldPacket;
 }
 
+WorldPacket const* WorldPackets::BattlePay::UpgradeComplete::Write()
+{
+	_worldPacket << CharacterGUID;
+
+	return &_worldPacket;
+}
+
 void WorldPackets::BattlePay::DistributionAssignToTarget::Read()
 {
 	_worldPacket >> ProductID;

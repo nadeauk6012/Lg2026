@@ -16,6 +16,7 @@
  */
 
 #include "BattlePayPackets.h"
+#include "CharacterPackets.h"
 #include "CharacterService.h"
 #include "DB2Stores.h"
 #include "World.h"
@@ -49,12 +50,12 @@ void WorldSession::HandleBattlePayTrialBoostCharacter(WorldPackets::BattlePay::B
     if (isAlliance)
     {
         mapId = 1554; zoneId = 8124; // Sword of Dawn
-        x = -2556.0f; y = 2939.6f; z = 134.6f; o = 1.98f;
+        x = -2556.0f; y = 2939.6f; z = 135.6f; o = 1.98f;
     }
     else
     {
         mapId = 1557; zoneId = 8422; // Tempest's Roar
-        x = 0.721f; y = 1.685f; z = 34.501f; o = 6.2787f;
+        x = 0.721f; y = 1.685f; z = 35.501f; o = 6.2787f;
     }
 
     sCharacterService->BoostCharacter(this, packet.Character, 100,
@@ -78,6 +79,14 @@ void WorldSession::HandleBattlePayTrialBoostCharacter(WorldPackets::BattlePay::B
     upgradeQueued.EquipmentItems = sDB2Manager.GetItemLoadOutItemsByClassID(charInfo->Class, loadoutType)[0];
     SendPacket(upgradeQueued.Write());
 
-    // Refresh character list so client sees updated level/gear
-    SendCharacterEnum();
+    // Delay UpgradeComplete + character list refresh to let client play the animation
+    ObjectGuid charGuid = packet.Character;
+    AddDelayedEvent(3000, [this, charGuid]()
+        {
+            WorldPackets::BattlePay::UpgradeComplete upgradeComplete;
+            upgradeComplete.CharacterGUID = charGuid;
+            SendPacket(upgradeComplete.Write());
+
+            SendCharacterEnum();
+        });
 }
