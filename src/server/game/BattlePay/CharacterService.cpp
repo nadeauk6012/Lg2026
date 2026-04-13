@@ -84,7 +84,7 @@ void CharacterService::BoostCharacter(WorldSession* /*session*/, ObjectGuid targ
 	uint8 charRace = charInfo->Race;
 	bool isAlliance = ((1 << (charRace - 1)) & RACEMASK_ALLIANCE) != 0;
 
-	CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+	CharacterDatabaseConnection trans = CharacterDatabase.BeginTransaction();
 
 	// a) Set level + XP=0
 	auto stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_LEVEL);

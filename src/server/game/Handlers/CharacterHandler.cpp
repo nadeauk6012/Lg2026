@@ -1002,6 +1002,16 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
             player->CreateDefaultPet();
         }
 
+        // Level-up animation for boosted class trial characters (first login only)
+        if (player->HasAtLoginFlag(AT_LOGIN_CLASS_TRIAL) && !player->HasAtLoginFlag(AT_LOGIN_CLASS_TRIAL_LOCKED))
+        {
+            WorldPackets::Misc::LevelUpInfo levelUp;
+            levelUp.Level = player->getLevel();
+            levelUp.HealthDelta = 0;
+            levelUp.Cp = 0;
+            player->SendDirectMessage(levelUp.Write());
+        }
+
         // show time before shutdown if shutdown planned.
         if (sWorld->IsShuttingDown())
             sWorld->ShutdownMsg(true, player);
