@@ -18,9 +18,12 @@
 #ifndef Resolver_h__
 #define Resolver_h__
 
+#include "IoContext.h"
+
 #include "Common.h"
 #include <boost/asio/ip/tcp.hpp>
-
+#include <string_view>
+#include <vector>
 namespace Trinity
 {
     namespace Asio

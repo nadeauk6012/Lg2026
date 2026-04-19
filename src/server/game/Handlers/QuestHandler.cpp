@@ -755,7 +755,7 @@ void WorldSession::HandleAdventureJournalOpenQuest(WorldPackets::Quest::Adventur
     if (!entry)
         return;
 
-    if (entry->Type != 3/*typeQuest*/)
+    if (!entry->QuestID)
         return;
 
     auto quest = sQuestDataStore->GetQuestTemplate(entry->QuestID);
@@ -765,6 +765,7 @@ void WorldSession::HandleAdventureJournalOpenQuest(WorldPackets::Quest::Adventur
     if (_player->hasQuest(entry->QuestID) || !_player->CanTakeQuest(quest, true))
         return;
 
+    _player->SetPopupQuestId(quest->GetQuestId());
     _player->SetDivider(_player->GetGUID());
     PlayerMenu menu(this);
     menu.SendQuestGiverQuestDetails(quest, _player->GetGUID(), true, false);
@@ -774,21 +775,54 @@ void WorldSession::HandleAdventureJournalStartQuest(WorldPackets::Quest::Adventu
 {
     auto questID = packet.QuestID;
 
-    if (std::find_if(sAdventureMapPOIStore.begin(), sAdventureMapPOIStore.end(), [questID](AdventureMapPOIEntry const* adventureMapPOIEntry) -> bool { return adventureMapPOIEntry->Type == 1 && adventureMapPOIEntry->QuestID == questID; }) == sAdventureMapPOIStore.end())
-        return;
-
     auto player = GetPlayer();
+
+    // Check Adventure Map POI first (Scouting Map / Class Hall map quests)
+    bool isAdventureMapQuest = std::find_if(sAdventureMapPOIStore.begin(), sAdventureMapPOIStore.end(),
+        [questID](AdventureMapPOIEntry const* entry) -> bool { return entry->Type == 1 && entry->QuestID == questID; })
+        != sAdventureMapPOIStore.end();
+
+    if (isAdventureMapQuest)
+    {
+        auto quest = sQuestDataStore->GetQuestTemplate(questID);
+        if (!quest)
+            return;
+
+        if (!player->getAdventureQuestID() && player->CanTakeQuest(quest, true) && player->CanAddQuest(quest, true))
+        {
+            player->setAdventureQuestID(quest->Id);
+            player->AddQuest(quest, player);
+            if (player->CanCompleteQuest(quest->Id))
+                player->CompleteQuest(quest->Id);
+        }
+        return;
+    }
+
+    // Fallback: check Adventure Journal (Adventure Guide suggested content)
+    bool isJournalQuest = false;
+    for (auto const& entry : sAdventureJournalStore)
+    {
+        if (entry && entry->QuestID == questID)
+        {
+            isJournalQuest = true;
+            break;
+        }
+    }
+
+    if (!isJournalQuest)
+
     auto quest = sQuestDataStore->GetQuestTemplate(questID);
     if (!quest)
         return;
 
-    if (!player->getAdventureQuestID() && player->CanTakeQuest(quest, true) && player->CanAddQuest(quest, true))
-    {
-        player->setAdventureQuestID(quest->Id);
-        player->AddQuest(quest, player);
-        if (player->CanCompleteQuest(quest->Id))
-            player->CompleteQuest(quest->Id);
-    }
+    if (player->hasQuest(questID) || !player->CanTakeQuest(quest, true))
+        return;
+
+    // Show quest details — player must click Accept
+    player->SetPopupQuestId(quest->GetQuestId());
+    player->SetQuestSharingInfo(player->GetGUID(), quest->GetQuestId());
+    PlayerMenu menu(this);
+    menu.SendQuestGiverQuestDetails(quest, player->GetGUID(), true, false);
 }
 
 bool WorldSession::AdventureMapPOIAvailable(uint32 adventureMapPOIID)
