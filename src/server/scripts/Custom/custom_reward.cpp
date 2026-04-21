@@ -215,7 +215,7 @@ public:
             if (player->GetAchievementMgr()->IsCompletedAchievement(achiev, player))
                 player->CompletedAchievement(achiev);
 
-        if (!sWorld->getBoolConfig(CONFIG_ARGUSWOW_ENABLE))
+        if (!sWorld->getBoolConfig(CONFIG_PARAGON_ENABLE))
         {
             if(QueryResult share_result = CharacterDatabase.PQuery("SELECT * FROM `account_share` WHERE account = '%u'", accountId))
             {
