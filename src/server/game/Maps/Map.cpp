@@ -5310,19 +5310,8 @@ void Map::UpdateLoop(volatile uint32 _mapID)
 
     uint32 prevSleepTime = 0;
 
-    // TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Run _mapID %u thread %u", _mapID, std::this_thread::get_id());
-
     while (!b_isMapStop)
     {
-        if (m_worldCrashChecker) // Crashing detected, need stop map
-        {
-            m_Transports.clear();
-            UnloadAll();
-            b_isMapStop = true;
-            TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Crash _mapID %u thread %u", _mapID, std::this_thread::get_id());
-            break;
-        }
-
         try
         {
             m_mapLoopCounter++;
@@ -5391,8 +5380,6 @@ void Map::UpdateLoop(volatile uint32 _mapID)
                 m_currentSession->KickPlayer();
         }
     }
-
-    TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Stop _mapID %u thread %u", _mapID, std::this_thread::get_id());
 
     cds::threading::Manager::detachThread();
 }

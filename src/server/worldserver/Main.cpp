@@ -54,6 +54,7 @@
 #include "World.h"
 #include "WorldSocket.h"
 #include "WorldSocketMgr.h"
+#include "WorldStateMgr.h"
 #include "Banner.h"
 
 #ifdef WIN32
@@ -252,6 +253,8 @@ extern int main(int argc, char **argv)
         //sInstanceSaveMgr->Unload();
         sOutdoorPvPMgr->Die();                    // unload it before MapManager
         sMapMgr->UnloadAll();                     // unload all grids (including locked in memory)
+
+        sWorldStateMgr.Unload();
     });
 
     // Start the Remote Access port (acceptor) if enabled
