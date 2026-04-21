@@ -3726,6 +3726,10 @@ double DB2Manager::GetChallngeWeight(uint32 mapID)
 {
     switch (sWorld->getIntConfig(CONFIG_DUNGEON_ACTIVE_STEP))
     {
+    case 0: // Disable all dungeons
+    case 1: // step 7.0.3
+        switch (mapID)
+        {
         case 1651: // Upper and Lower Karazhan
         case 1571: // Court of Stars
         case 1516: // The Arcway
@@ -3793,6 +3797,7 @@ double DB2Manager::GetChallngeWeight(uint32 mapID)
 
     return 0.0;
 }
+
 
 std::vector<PvpTalentEntry const*> DB2Manager::GetPvpTalentByPosition(uint8 playerClass, uint8 row, uint8 column)
 {

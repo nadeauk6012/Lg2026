@@ -185,11 +185,11 @@ void Map::VisitNearbyCellsOf(WorldObject* obj)
             Visit(cell, gridVisitor);
             Visit(cell, worldVisitor);
 
-            uint32 pullY = y / sWorld->getIntConfig(CONFIG_SIZE_CELL_FOR_PULL); // Max y = MAX_NUMBER_OF_GRIDS - 1
-            uint32 pullX = x / sWorld->getIntConfig(CONFIG_SIZE_CELL_FOR_PULL); // Max x = MAX_NUMBER_OF_GRIDS - 1
-            // count of pull is TOTAL_NUMBER_OF_CELLS_PER_MAP / CONFIG_SIZE_CELL_FOR_PULL
-            uint32 pullId = (pullY * (TOTAL_NUMBER_OF_CELLS_PER_MAP / sWorld->getIntConfig(CONFIG_SIZE_CELL_FOR_PULL))) + pullX;
-            std::vector<WorldObject*>& collectObjects = i_objectUpdater[pullY % 2][(pullY + pullX) % 2][pullId];
+            uint32 groupY = y / sWorld->getIntConfig(CONFIG_MAP_UPDATE_CELL_GROUP_SIZE); // Max y = MAX_NUMBER_OF_GRIDS - 1
+            uint32 groupX = x / sWorld->getIntConfig(CONFIG_MAP_UPDATE_CELL_GROUP_SIZE); // Max x = MAX_NUMBER_OF_GRIDS - 1
+            // count of groups is TOTAL_NUMBER_OF_CELLS_PER_MAP / CONFIG_MAP_UPDATE_CELL_GROUP_SIZE
+            uint32 groupId = (groupY * (TOTAL_NUMBER_OF_CELLS_PER_MAP / sWorld->getIntConfig(CONFIG_MAP_UPDATE_CELL_GROUP_SIZE))) + groupX;
+            std::vector<WorldObject*>& collectObjects = i_objectUpdater[groupY % 2][(groupY + groupX) % 2][groupId];
             for (auto& obj : objectUpdater.i_collectObjects)
                 if (i_objectTest.find(obj) == i_objectTest.end())
                 {

@@ -1486,9 +1486,19 @@ void World::LoadConfigSettings(bool reload)
     m_serverTimeTZ = sConfigMgr->GetStringDefault("ServerTimeTZ", "Europe/Paris");// == number of seconds elapsed since 00:00 hours, Jan 1, 1970 UTC
     m_gameTimeTZ = sConfigMgr->GetStringDefault("GameTimeTZ", "Europe/Paris"); // == number of seconds elapsed since 00:00 hours, Jan 1, 1970 UTC
 
-    m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]  = sConfigMgr->GetIntDefault("MaxPrestigeLevel", 14);
+    m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] = sConfigMgr->GetIntDefault("MaxPrestigeLevel", 25);
+    if (int32(m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]) < 0 || m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] > 25)
+    {
+        TC_LOG_ERROR("server.loading", "MaxPrestigeLevel (%i) must be in range 1..25. Set to 25.", m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]);
+        m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] = 25;
+    }
 
-    m_int_configs[CONFIG_SIZE_CELL_FOR_PULL]  = sConfigMgr->GetIntDefault("SizeCellForPull", 8);
+    m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] = sConfigMgr->GetIntDefault("Map.UpdateCellGroupSize", 8);
+    if (m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] < 1)
+    {
+        TC_LOG_ERROR("server.loading", "Map.UpdateCellGroupSize (%u) must be >= 1. Set to 8.", m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE]);
+        m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] = 8;
+    }
 
     m_bool_configs[CONFIG_ANTICHEAT_ENABLED] = sConfigMgr->GetBoolDefault("Anticheat.Enable", false);
     m_bool_configs[CONFIG_ANTICHEAT_ANTI_MULTI_JUMP_ENABLED] = sConfigMgr->GetBoolDefault("Anticheat.AntiMultiJump.Enable", false);
