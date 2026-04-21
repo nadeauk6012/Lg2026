@@ -62,7 +62,7 @@ std::string getBalansInfo(Player* player)
     if (sWorld->getBoolConfig(CONFIG_DONATE_ON_TESTS)) // if test, then free donate
         balans = 10000;
 
-    if (sWorld->getBoolConfig(CONFIG_ARGUSWOW_ENABLE))
+    if (sWorld->getBoolConfig(CONFIG_PARAGON_ENABLE))
     {
         if (player->GetSession()->GetSessionDbLocaleIndex() == 8) // rus
         {
