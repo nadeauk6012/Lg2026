@@ -3724,72 +3724,73 @@ std::vector<double> DB2Manager::GetChallngesWeight()
 
 double DB2Manager::GetChallngeWeight(uint32 mapID)
 {
-    if (sWorld->getBoolConfig(CONFIG_ARGUSWOW_ENABLE))
+    switch (sWorld->getIntConfig(CONFIG_DUNGEON_ACTIVE_STEP))
     {
-        switch(sWorld->getIntConfig(CONFIG_DUNGEON_ACTIVE_STEP))
-        {
-            case 0: // Disable all dungeons
-            case 1: // step 7.0.3
-                switch(mapID)
-                {
-                    case 1651: // Upper and Lower Karazhan
-                    case 1571: // Court of Stars
-                    case 1516: // The Arcway
-                    case 1677: // Cathedral of Eternal Night
-                    case 1753: // Seat of the Triumvirate
-                        return 0.0;
-                }
-                break;
-            case 2: // step 7.1.0
-                switch(mapID)
-                {
-                    case 1571: // Court of Stars
-                    case 1516: // The Arcway
-                    case 1677: // Cathedral of Eternal Night
-                    case 1753: // Seat of the Triumvirate
-                        return 0.0;
-                }
-                break;
-            case 3: // step 7.1.5
-                switch(mapID)
-                {
-                    case 1677: // Cathedral of Eternal Night
-                    case 1753: // Seat of the Triumvirate
-                        return 0.0;
-                }
-                break;
-            case 4: // step 7.2.5
-                switch(mapID)
-                {
-                    case 1753: // Seat of the Triumvirate
-                        return 0.0;
-                }
-                break;
-            case 5: // step 7.3.2
-            default:
-                break;
-        }
-    }
-
-    switch(mapID)
-    {
-        case 1492: // Maw of Souls
-            return 10.0;
         case 1651: // Upper and Lower Karazhan
+        case 1571: // Court of Stars
+        case 1516: // The Arcway
         case 1677: // Cathedral of Eternal Night
         case 1753: // Seat of the Triumvirate
-            return 8.5;
-        case 1493: // Vault of the Wardens
-        case 1458: // Neltharion's Lair
-        case 1516: // The Arcway
-        case 1477: // Halls of Valor
-            return 7.5;
+            return 0.0;
+        }
+        break;
+
+    case 2: // step 7.1.0
+        switch (mapID)
+        {
         case 1571: // Court of Stars
-        case 1501: // Black Rook Hold
-        case 1466: // Darkheart Thicket
-        case 1456: // Eye of Azshara
-            return 6.5;
+        case 1516: // The Arcway
+        case 1677: // Cathedral of Eternal Night
+        case 1753: // Seat of the Triumvirate
+            return 0.0;
+        }
+        break;
+
+    case 3: // step 7.1.5
+        switch (mapID)
+        {
+        case 1677: // Cathedral of Eternal Night
+        case 1753: // Seat of the Triumvirate
+            return 0.0;
+        }
+        break;
+
+    case 4: // step 7.2.5
+        switch (mapID)
+        {
+        case 1753: // Seat of the Triumvirate
+            return 0.0;
+        }
+        break;
+
+    case 5: // step 7.3.2
+    default:
+        break;
     }
+
+    switch (mapID)
+    {
+    case 1492: // Maw of Souls
+        return 10.0;
+
+    case 1651: // Upper and Lower Karazhan
+    case 1677: // Cathedral of Eternal Night
+    case 1753: // Seat of the Triumvirate
+        return 8.5;
+
+    case 1493: // Vault of the Wardens
+    case 1458: // Neltharion's Lair
+    case 1516: // The Arcway
+    case 1477: // Halls of Valor
+        return 7.5;
+
+    case 1571: // Court of Stars
+    case 1501: // Black Rook Hold
+    case 1466: // Darkheart Thicket
+    case 1456: // Eye of Azshara
+        return 6.5;
+    }
+
     return 0.0;
 }
 

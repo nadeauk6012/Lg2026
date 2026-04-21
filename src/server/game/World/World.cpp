@@ -1531,7 +1531,6 @@ void World::LoadConfigSettings(bool reload)
 
     m_bool_configs[CONFIG_ARTIFACT_TIER_ENABLE]  = sConfigMgr->GetBoolDefault("ArtifactTierEnable", true);
 
-    m_bool_configs[CONFIG_ARGUSWOW_ENABLE]  = sConfigMgr->GetBoolDefault("ArgusWowEnable", true);
     m_int_configs[CONFIG_DUNGEON_ACTIVE_STEP] = sConfigMgr->GetIntDefault("Dungeon.ActiveStep", 0);
 
 	m_int_configs[CONFIG_WEIGHTED_MYTHIC_KEYSTONE] = sConfigMgr->GetIntDefault("Dungeon.WeightedMythicKeystone.Enabled", 1);
