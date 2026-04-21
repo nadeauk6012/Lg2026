@@ -1489,14 +1489,14 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] = sConfigMgr->GetIntDefault("MaxPrestigeLevel", 25);
     if (int32(m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]) < 0 || m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] > 25)
     {
-        TC_LOG_ERROR("server.loading", "MaxPrestigeLevel (%i) must be in range 1..25. Set to 25.", m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]);
+        TC_LOG_ERROR(LOG_FILTER_GENERAL, "MaxPrestigeLevel (%i) must be in range 1..25. Set to 25.", m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL]);
         m_int_configs[CONFIG_MAX_PRESTIGE_LEVEL] = 25;
     }
 
     m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] = sConfigMgr->GetIntDefault("Map.UpdateCellGroupSize", 8);
     if (m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] < 1)
     {
-        TC_LOG_ERROR("server.loading", "Map.UpdateCellGroupSize (%u) must be >= 1. Set to 8.", m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE]);
+        TC_LOG_ERROR(LOG_FILTER_GENERAL, "Map.UpdateCellGroupSize (%u) must be >= 1. Set to 8.", m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE]);
         m_int_configs[CONFIG_MAP_UPDATE_CELL_GROUP_SIZE] = 8;
     }
 
