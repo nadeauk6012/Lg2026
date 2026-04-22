@@ -5303,6 +5303,8 @@ void Map::AddToMapWait(Object* obj)
 
 void Map::UpdateLoop(volatile uint32 _mapID)
 {
+    cds::threading::Manager::attachThread();
+
     uint32 realCurrTime = 0;
     uint32 realPrevTime = getMSTime();
 
@@ -5378,6 +5380,8 @@ void Map::UpdateLoop(volatile uint32 _mapID)
                 m_currentSession->KickPlayer();
         }
     }
+
+    cds::threading::Manager::detachThread();
 }
 
 void Map::SetMapUpdateInterval()
