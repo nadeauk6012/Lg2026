@@ -438,7 +438,9 @@ bool LoadRealmInfo()
     {
         realm.Id = realmListRealm->Id;
         realm.Build = sConfigMgr->GetIntDefault("Game.Build.Version", 26972);
-        realm.Addresses =realmListRealm->Addresses;
+        realm.ExternalAddress = std::make_unique<boost::asio::ip::address>(*realmListRealm->ExternalAddress);
+        realm.LocalAddress = std::make_unique<boost::asio::ip::address>(*realmListRealm->LocalAddress);
+        realm.LocalSubnetMask = std::make_unique<boost::asio::ip::address>(*realmListRealm->LocalSubnetMask);
         realm.Port = realmListRealm->Port;
         realm.Name = realmListRealm->Name;
         realm.Type = realmListRealm->Type;

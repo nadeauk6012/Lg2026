@@ -74,7 +74,9 @@ struct Realm
 {
     Battlenet::RealmHandle Id;
     uint32 Build;
-    std::vector<boost::asio::ip::address> Addresses;
+    std::unique_ptr<boost::asio::ip::address> ExternalAddress;
+    std::unique_ptr<boost::asio::ip::address> LocalAddress;
+    std::unique_ptr<boost::asio::ip::address> LocalSubnetMask;
     uint16 Port;
     std::string Name;
     uint8 Type;

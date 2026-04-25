@@ -230,11 +230,11 @@ uint32 Battlenet::Session::HandleLogon(authentication::v1::LogonRequest const* l
     _locale = logonRequest->locale();
     _os = logonRequest->platform();
 
-    auto const& endpoint = sLoginService.GetAddressForClient(	());
+    auto const& endpoint = sLoginService.GetAddressForClient(GetRemoteIpAddress());
 
     challenge::v1::ChallengeExternalRequest externalChallenge;
     externalChallenge.set_payload_type("web_auth_url");
-    externalChallenge.set_payload(Trinity::StringFormat("https://%s:%u/bnetserver/login/", endpoint, sLoginService.GetPort()));
+    externalChallenge.set_payload(Trinity::StringFormat("https://%s:%u/bnetserver/login/", endpoint.address().to_string().c_str(), endpoint.port()));
     Service<challenge::v1::ChallengeListener>(this).OnExternalChallenge(&externalChallenge);
     return ERROR_OK;
 }
