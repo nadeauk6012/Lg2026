@@ -26,6 +26,7 @@
 #include "Util.h"
 #include "game_utilities_service.pb.h"
 #include "RealmList.pb.h"
+#include "advstd.h"
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <zlib.h>
@@ -97,7 +98,7 @@ void RealmList::LoadBuildInfo()
     }
 }
 
-void RealmList::UpdateRealm(Battlenet::RealmHandle const& id, uint32 build, std::string const& name, boost::asio::ip::address const& address, boost::asio::ip::address const& localAddr, boost::asio::ip::address const& localSubmask, uint16 port, uint8 icon, RealmFlags flag, uint8 timezone, AccountTypes allowedSecurityLevel, float population)
+void RealmList::UpdateRealm(Battlenet::RealmHandle const& id, uint32 build, std::string const& name, boost::asio::ip::address const&, boost::asio::ip::address&&, std::vector<boost::asio::ip::address>&& addresses, uint16 port, uint8 icon, RealmFlags flag, uint8 timezone, AccountTypes allowedSecurityLevel, float population)
 {
     std::lock_guard<std::recursive_mutex> guard(i_RealmList_lock);
     // Create new if not exist or update existed
@@ -111,12 +112,7 @@ void RealmList::UpdateRealm(Battlenet::RealmHandle const& id, uint32 build, std:
     realm.Timezone = timezone;
     realm.AllowedSecurityLevel = allowedSecurityLevel;
     realm.PopulationLevel = population;
-    if (!realm.ExternalAddress || *realm.ExternalAddress != address)
-        realm.ExternalAddress = Trinity::make_unique<boost::asio::ip::address>(address);
-    if (!realm.LocalAddress || *realm.LocalAddress != localAddr)
-        realm.LocalAddress = Trinity::make_unique<boost::asio::ip::address>(localAddr);
-    if (!realm.LocalSubnetMask || *realm.LocalSubnetMask != localSubmask)
-        realm.LocalSubnetMask = Trinity::make_unique<boost::asio::ip::address>(localSubmask);
+    realm.Addresses = std::move(addresses);
     realm.Port = port;
 }
 
@@ -149,58 +145,59 @@ void RealmList::UpdateRealms(boost::system::error_code const& error)
                 Field* fields = result->Fetch();
                 uint32 realmId = fields[0].GetUInt32();
                 std::string name = fields[1].GetString();
-                std::string externalAddressString = fields[2].GetString();
-                std::string localAddressString = fields[3].GetString();
-                std::string localSubmaskString = fields[4].GetString();
+                std::vector<boost::asio::ip::address> addresses;
 
-                Optional<boost::asio::ip::tcp::endpoint> externalAddress = _resolver->Resolve(boost::asio::ip::tcp::v4(), externalAddressString, "");
-                if (!externalAddress)
+                for (std::size_t i = 0; i < 4; ++i)
                 {
-                    TC_LOG_ERROR(LOG_FILTER_REALMLIST, "Could not resolve address %s for realm \"%s\" id %u", fields[2].GetString().c_str(), name.c_str(), realmId);
-                    continue;
+                    if (fields[2 + i].IsNull())
+                        continue;
+
+                    for (boost::asio::ip::tcp::endpoint const& endpoint : _resolver->ResolveAll(fields[2 + i].GetStringView(), ""))
+                    {
+                        boost::asio::ip::address address = endpoint.address();
+                        if (advstd::ranges::contains(addresses, address))
+                            continue;
+
+                        addresses.push_back(std::move(address));
+                    }
                 }
 
-                Optional<boost::asio::ip::tcp::endpoint> localAddress = _resolver->Resolve(boost::asio::ip::tcp::v4(), localAddressString, "");
-                if (!localAddress)
-                {
-                    TC_LOG_ERROR(LOG_FILTER_REALMLIST, "Could not resolve localAddress %s for realm \"%s\" id %u", fields[3].GetString().c_str(), name.c_str(), realmId);
-                    continue;
-                }
-
-                Optional<boost::asio::ip::tcp::endpoint> localSubmask = _resolver->Resolve(boost::asio::ip::tcp::v4(), localSubmaskString, "");
-                if (!localSubmask)
-                {
-                    TC_LOG_ERROR(LOG_FILTER_REALMLIST, "Could not resolve localSubnetMask %s for realm \"%s\" id %u", fields[4].GetString().c_str(), name.c_str(), realmId);
-                    continue;
-                }
-
-                uint16 port = fields[5].GetUInt16();
-                uint8 icon = fields[6].GetUInt8();
+                uint16 port = fields[6].GetUInt16();
+                uint8 icon = fields[7].GetUInt8();
                 if (icon == REALM_TYPE_FFA_PVP)
                     icon = REALM_TYPE_PVP;
                 if (icon >= MAX_CLIENT_REALM_TYPE)
                     icon = REALM_TYPE_NORMAL;
-                RealmFlags flag = RealmFlags(fields[7].GetUInt8());
-                uint8 timezone = fields[8].GetUInt8();
-                uint8 allowedSecurityLevel = fields[9].GetUInt8();
-                float pop = fields[10].GetFloat();
-                uint32 build = sConfigMgr->GetIntDefault("Game.Build.Version", 26972);
-                uint8 region = fields[12].GetUInt8();
-                uint8 battlegroup = fields[13].GetUInt8();
+                RealmFlags flag = RealmFlags(fields[8].GetUInt8());
+                uint8 timezone = fields[9].GetUInt8();
+                uint8 allowedSecurityLevel = fields[10].GetUInt8();
+                float pop = fields[11].GetFloat();
+                uint32 build = fields[12].GetUInt32();
+                uint8 region = fields[13].GetUInt8();
+                uint8 battlegroup = fields[14].GetUInt8();
 
                 Battlenet::RealmHandle id{ region, battlegroup, realmId };
 
-                UpdateRealm(id, build, name, externalAddress->address(), localAddress->address(), localSubmask->address(), port, icon, flag,
+                UpdateRealm(id, build, name, std::move(addresses), port, icon, flag,
                     timezone, (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR), pop);
 
                 _subRegions.insert(Battlenet::RealmHandle{ region, battlegroup, 0 }.GetAddressString());
 
-                if (!existingRealms.count(id))
-                    TC_LOG_INFO(LOG_FILTER_REALMLIST, "Added realm \"%s\" at %s:%u.", name.c_str(), externalAddressString.c_str(), port);
-                else
-                    TC_LOG_DEBUG(LOG_FILTER_REALMLIST, "Updating realm \"%s\" at %s:%u.", name.c_str(), externalAddressString.c_str(), port);
+                auto buildAddressesLogText = [&]
+                {
+                    std::string text;
+                    for (boost::asio::ip::address const& address : newRealms[id].Addresses)
+                    {
+                        text += address.to_string();
+                        text += ' ';
+                    }
+                    return text;
+                };
 
-                existingRealms.erase(id);
+                if (!existingRealms.erase(id))
+                    TC_LOG_INFO(LOG_FILTER_REALMLIST, "Added realm \"{}\" at {}(port {}).", name, buildAddressesLogText(), port);
+                else
+                    TC_LOG_DEBUG(LOG_FILTER_REALMLIST, "Updating realm \"{}\" at {}(port {}).", name, buildAddressesLogText(), port);
             }
             catch (std::exception& ex)
             {
@@ -372,12 +369,14 @@ uint32 RealmList::JoinRealm(uint32 realmAddress, uint32 /*build*/, boost::asio::
         if (realm->Flags & REALM_FLAG_OFFLINE/* || realm->Build != build*/)
             return ERROR_USER_SERVER_NOT_PERMITTED_ON_REALM;
 
+        boost::asio::ip::address addressForClient = realm->GetAddressForClient(clientAddress);
+
         JSON::RealmList::RealmListServerIPAddresses serverAddresses;
         auto addressFamily = serverAddresses.add_families();
-        addressFamily->set_family(1);
+        addressFamily->set_family(addressForClient.is_v6() ? 2 : 1);
 
         auto address = addressFamily->add_addresses();
-        address->set_ip(realm->GetAddressForClient(clientAddress).to_string());
+        address->set_ip(addressForClient.to_string());
         address->set_port(realm->Port);
 
         auto json = "JSONRealmListServerIPAddresses:" + JSON::Serialize(serverAddresses);

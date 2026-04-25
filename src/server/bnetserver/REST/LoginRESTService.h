@@ -44,7 +44,8 @@ public:
     bool Start(Trinity::Asio::IoContext* ioContext);
     void Stop();
 
-    boost::asio::ip::tcp::endpoint const& GetAddressForClient(boost::asio::ip::address const& address) const;
+    std::string const& GetHostnameForClient(boost::asio::ip::address const& address) const;
+    uint16 GetPort() const { return _port; }
 
     std::unique_ptr<Battlenet::Session::AccountInfo> VerifyLoginTicket(std::string const& id);
 
@@ -107,9 +108,7 @@ private:
     std::string _bindIP;
     int32 _port;
     int32 _waitTime;
-    boost::asio::ip::tcp::endpoint _externalAddress;
-    boost::asio::ip::tcp::endpoint _localAddress;
-	boost::asio::ip::address_v4 _localNetmask;
+    std::array<std::pair<std::string, std::vector<boost::asio::ip::address>>, 2> _hostnames;
     std::mutex _loginTicketMutex;
     std::unordered_map<std::string, LoginTicket> _validLoginTickets;
     std::shared_ptr<Trinity::Asio::DeadlineTimer> _loginTicketCleanupTimer;
