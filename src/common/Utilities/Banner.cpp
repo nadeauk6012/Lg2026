@@ -23,7 +23,6 @@ void Trinity::Banner::Show(char const* applicationName, void(*log)(char const* t
 {
     log(StringFormat("%s (%s)", GitRevision::GetFullVersion(), applicationName).c_str());
 	log("<Ctrl-C> to stop.\n");
-	log("       101010101010101100100101010                                                                                ");
 	log("      10101010101010110010010101010                                                                               ");
 	log("     00100                     01100                                                                              ");
 	log("    10101   010101       0101   01010   01001                  10101                  01001                  10101");
@@ -40,9 +39,9 @@ void Trinity::Banner::Show(char const* applicationName, void(*log)(char const* t
 	log("    10101   1010      0100010   01010   10111000            01011101   01010110101    10111000            01011101");
 	log("     0100                       0100    0011011              0011001    010101010     0011001              0011001");
 	log("      10101010101010110010010101001                      ");
-	log("       101010101010101100100101001                   ( C O R E---N O R D R A S S I L---P R O J E C T)             ");
-	log("       ");
-	log(" https://nordrassil.cubava.cu/                    \n");
+	log("       101010101010101100100101001                       ( C O R E---B H R E A L M S ---P R O J E C T)   F O R    ");
+	log("  N E L T H A R I U S     ");
+	log("   2 0 2 6  P R O D U C T I O N   \n");
 
     if (logExtraInfo)
         logExtraInfo();
