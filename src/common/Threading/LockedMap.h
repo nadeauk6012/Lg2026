@@ -202,7 +202,7 @@ namespace Trinity
         {
             WriteGuard Guard(GetLock());
             WriteGuard GuardX(x.GetLock());
-            m_storage.swap(x.storage);
+            m_storage.swap(x.m_storage);
         }
 
         void clear(void)
