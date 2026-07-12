@@ -320,7 +320,7 @@ void Scenario::SetCurrentStep(uint8 step)
     ActiveSteps.push_back(steps[currentStep]->ID);
 }
 
-uint8 Scenario::UpdateCurrentStep(bool loading)
+void Scenario::UpdateCurrentStep(bool loading)
 {
     // i_updateLock.lock();
     uint8 oldStep = currentStep;
@@ -392,12 +392,12 @@ uint8 Scenario::UpdateCurrentStep(bool loading)
             Reward(false, oldStep);
     }
 
+    if (currentStep < steps.size())
     SetStepState(steps[currentStep], SCENARIO_STEP_IN_PROGRESS);
-    SetStepState(steps[oldStep], SCENARIO_STEP_DONE);
 
+    SetStepState(steps[oldStep], SCENARIO_STEP_DONE);
     // i_updateLock.unlock();
     //TC_LOG_DEBUG(LOG_FILTER_CHALLENGE, "UpdateCurrentStep currentStep %u oldStep %u loading %u", currentStep, oldStep, loading);
-    return currentStep;
 }
 
 uint32 Scenario::GetScenarioCriteriaByStep(uint8 step)
