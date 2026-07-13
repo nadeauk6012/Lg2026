@@ -124,6 +124,6 @@ public:
 void AddSC_BattlePay_Services()
 {
     new BattlePay_Level<100>("battlepay_service_level100");
-    new playerScriptTokensAvailable();
+   // new playerScriptTokensAvailable();
     //new BattlePay_AccountService<ServiceFlags::PremadePve>("battlepay_service_premade");
 }
