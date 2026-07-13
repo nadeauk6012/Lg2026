@@ -1,6 +1,7 @@
 #include "BattlePayMgr.h"
 #include "DB2Stores.h"
 #include "ScriptMgr.h"
+//#include "Player.h"
 
 #define ITEM_HEARTHSTONE 6948
 
@@ -84,7 +85,25 @@ public:
         return true; // Service product: level check is done at delivery time, not at purchase
     }
 };
+/*
+class playerScriptTokensAvailable : public PlayerScript
+{
+public:
+    playerScriptTokensAvailable() : PlayerScript("playerScriptTokensAvailable") { }
 
+    void OnLogin(Player* player) override
+    {
+        if (player)
+        {
+            if (player->GetSession()->GetBattlePayBalance() >= 100)
+            {
+                player->SendMessageToPlayer("Returning players received one free level boost per account, you have not used this level boost yet.");
+                player->SendMessageToPlayer("Login the character you want to have the level boost on, and claim it via the ingame store (Ingame Menu -> Shop).");
+            }
+        }
+    }
+};
+*/
 template <uint32 t_AccountServiceFlag> class BattlePay_AccountService : BattlePayProductScript
 {
 public:
@@ -105,5 +124,6 @@ public:
 void AddSC_BattlePay_Services()
 {
     new BattlePay_Level<100>("battlepay_service_level100");
+    new playerScriptTokensAvailable();
     //new BattlePay_AccountService<ServiceFlags::PremadePve>("battlepay_service_premade");
 }
