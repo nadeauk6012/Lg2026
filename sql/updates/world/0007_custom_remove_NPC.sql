@@ -1,0 +1,12 @@
+DELETE FROM `creature` WHERE `guid`=370997;
+DELETE FROM `creature` WHERE `guid`=370998;
+DELETE FROM `creature` WHERE `guid`=370999;
+DELETE FROM `creature` WHERE `guid`=371000;
+DELETE FROM `creature` WHERE `guid`=371002;
+DELETE FROM `creature` WHERE `guid`=371003;
+DELETE FROM `creature` WHERE `guid`=371004;
+DELETE FROM `creature` WHERE `guid`=371005;
+DELETE FROM `creature` WHERE `guid`=371006;
+DELETE FROM `creature` WHERE `guid`=371007;
+DELETE FROM `creature` WHERE `guid`=371008;
+DELETE FROM `creature` WHERE `guid`=371009;
