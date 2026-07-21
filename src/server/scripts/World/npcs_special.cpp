@@ -4690,7 +4690,8 @@ class npc_wild_imp : public CreatureScript
                 if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
-				if (sWorld->getBoolConfig(CONFIG_PLAYER_CONTROL_GUARDIAN_PETS))
+				if (sWorld->getBoolConfig(CONFIG_PLAYER_CONTROL_GUARDIAN_PETS) && me->getVictim())
+                {
 
 					if (!me->getVictim())
 						return;
@@ -4706,6 +4707,7 @@ class npc_wild_imp : public CreatureScript
 						Follow(me->getVictim());
 						return;
 					}
+                }
 
                 if (me->getVictim() && me->getVictim()->HasCrowdControlAura(me))
                 {

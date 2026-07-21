@@ -41,11 +41,8 @@ struct go_q40077 : public GameObjectAI
         SCENE = 191677,
     };
 
-    bool GossipHello(Player* player, bool isUse) override
+    bool GossipHello(Player* player) override
     {
-        if (!isUse)
-            return true;
-
         if (player->GetQuestStatus(40077) == QUEST_STATUS_INCOMPLETE)
         {
             player->CastSpell(player, SCENE, true);
