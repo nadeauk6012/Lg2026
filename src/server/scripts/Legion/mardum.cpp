@@ -32,53 +32,27 @@ public:
 };
 
 // 244898
-class go_q40077 : public GameObjectScript
+struct go_q40077 : public GameObjectAI
 {
-public:
-    go_q40077() : GameObjectScript("go_q40077") { }
+    go_q40077(GameObject* go) : GameObjectAI(go) { }
 
-    struct go_q40077AI : public GameObjectAI
+    enum data
     {
-        go_q40077AI(GameObject* go) : GameObjectAI(go)
-        {
-
-        }
-
-        enum data
-        {
-            SCENE = 191677,
-        };
-
-        bool GossipHello(Player* player, bool isUse) override
-        {
-            if (!isUse)
-                return true;
-
-            /*
-
-            ServerToClient: SMSG_PLAY_SCENE (0x2651) Length: 34 ConnIdx: 0 Time: 02/22/2016 12:57:13.116 Number: 11210
-            SceneID: 1116
-            PlaybackFlags: 27
-            SceneInstanceID: 2
-            SceneScriptPackageID: 1493
-            TransportGUID: Full: 0x0
-            Pos: X: 1002.885 Y: 2956.695 Z: -10.55672
-            Facing: 4.76053
-            */
-            if (player->GetQuestStatus(40077) == QUEST_STATUS_INCOMPLETE)
-            {
-                player->CastSpell(player, SCENE, true);
-                player->KillCreditGO(go->GetEntry(), go->GetGUID());
-                return true;
-            } else
-                return false;
-        }
-
+        SCENE = 191677,
     };
 
-    GameObjectAI* GetAI(GameObject* go) const override
+    bool GossipHello(Player* player, bool isUse) override
     {
-        return new go_q40077AI(go);
+        if (!isUse)
+            return true;
+
+        if (player->GetQuestStatus(40077) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->CastSpell(player, SCENE, true);
+            player->KillCreditGO(go->GetEntry(), go->GetGUID());
+            return true;
+        } else
+            return false;
     }
 };
 
